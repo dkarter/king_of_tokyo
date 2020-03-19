@@ -8,6 +8,11 @@
   width: 8rem;
 }
 
+.player-card form {
+  display: flex;
+  justify-content: space-between;
+}
+
 .dice-roll form {
   display: flex;
 }

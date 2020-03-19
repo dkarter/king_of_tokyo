@@ -30,6 +30,13 @@ defmodule KingOfTokyoWeb.DiceRollerLive do
 
   def render(assigns) do
     ~L"""
+    <div class="player-card">
+      <form action="#" phx-change="update-player">
+        <div>Name: <input name="name" type="text" value="<%= @name %>" /></div>
+        <div>Hearts: <input name="hearts" type="number" min="0" max="15" value="<%= @hearts %>" /></div>
+        <div>Stars: <input name="stars" type="number" min="0" max="20" value="<%= @stars %>" /></div>
+      </form>
+    </div>
     <div class="dice-roll">
       <form action="#" phx-submit="roll">
         <input type="number" min="1" max="8" name="dice_count" placeholder="How many dice?" value="<%= @dice_count %>"/>
@@ -41,7 +48,13 @@ defmodule KingOfTokyoWeb.DiceRollerLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, dice_count: 6, roll_result: [])}
+    name = "#{Faker.Name.En.first_name()} #{Faker.Name.En.last_name()}"
+    {:ok, assign(socket, name: name, dice_count: 6, roll_result: [], hearts: 10, stars: 0)}
+  end
+
+  def handle_event("update-player", fields, socket) do
+    %{"name" => name, "hearts" => hearts, "stars" => stars} = fields
+    {:noreply, assign(socket, name: name, hearts: hearts, stars: stars)}
   end
 
   def handle_event("roll", %{"dice_count" => dice_count}, socket) do
