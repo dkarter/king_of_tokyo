@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>Heart</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Green" transform="translate(-142.000000, -29.000000)">
+            <g id="Heart" transform="translate(142.000000, 29.000000)">
+                <rect id="Rectangle" fill="#5BC67F" x="0" y="0" width="128" height="128" rx="8"></rect>
+                <g id="np_heart_1742993_5BC67F" transform="translate(21.000000, 28.000000)" fill="#2A2E25" fill-rule="nonzero">
+                    <path d="M6.22517631,6.48146382 C-2.07971634,15.1230989 -2.07039989,29.0245499 6.22517631,37.6765161 L42.9773511,76 C55.2440016,63.2393593 67.50468,50.4787186 79.7713305,37.7180778 C88.0762232,29.0764427 88.0762232,15.1654919 79.7713305,6.52302555 C71.4664379,-2.11860954 58.0950722,-2.11860954 49.7891046,6.52302555 L43.0191557,13.5690462 L36.2072828,6.48122632 C27.9023902,-2.16040877 14.5310245,-2.16040877 6.22505687,6.48122632 L6.22517631,6.48146382 Z" id="Path"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

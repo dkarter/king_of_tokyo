@@ -1,0 +1,2 @@
+<%= live_render(@conn, KingOfTokyoWeb.DiceRollerLive) %>
+

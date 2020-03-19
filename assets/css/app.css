@@ -1,0 +1,84 @@
+/* This file is for your main application css. */
+
+@import "./phoenix.css";
+
+@import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+.logo img {
+  width: 8rem;
+}
+
+.dice-roll form {
+  display: flex;
+}
+
+.dice-roll button {
+  margin-left: 1rem;
+}
+
+.dice {
+  display: flex;
+}
+
+.die {
+  margin-right: 1rem;
+  height: 8rem;
+  width: 8rem;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.die-claw {
+  background-image: url('/images/dice/black/claw.svg');
+}
+
+.die-heart {
+  background-image: url('/images/dice/black/heart.svg');
+}
+
+.die-lightning {
+  background-image: url('/images/dice/black/lightning.svg');
+}
+
+.die-one {
+  background-image: url('/images/dice/black/one.svg');
+}
+
+.die-two {
+  background-image: url('/images/dice/black/two.svg');
+}
+
+.die-three {
+  background-image: url('/images/dice/black/three.svg');
+}
+
+.die-claw.die-index-7,
+.die-claw.die-index-8 {
+  background-image: url('/images/dice/green/claw.svg');
+}
+
+.die-heart.die-index-7,
+.die-heart.die-index-8 {
+  background-image: url('/images/dice/green/heart.svg');
+}
+
+.die-lightning.die-index-7,
+.die-lightning.die-index-8 {
+  background-image: url('/images/dice/green/lightning.svg');
+}
+
+.die-one.die-index-7,
+.die-one.die-index-8 {
+  background-image: url('/images/dice/green/one.svg');
+}
+
+.die-two.die-index-7,
+.die-two.die-index-8 {
+  background-image: url('/images/dice/green/two.svg');
+}
+
+.die-three.die-index-7,
+.die-three.die-index-8 {
+  background-image: url('/images/dice/green/three.svg');
+}
