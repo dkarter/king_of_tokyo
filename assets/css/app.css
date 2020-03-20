@@ -4,6 +4,11 @@
 
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 
+.button.danger {
+  background-color: #a94442;
+  border: none;
+}
+
 .logo img {
   width: 8rem;
 }
@@ -34,56 +39,61 @@
   background-repeat: no-repeat;
 }
 
-.die-claw {
+.die.selected {
+  border: 3px solid gold;
+  border-radius: 0.8rem;
+}
+
+.die.claw.black {
   background-image: url('/images/dice/black/claw.svg');
 }
 
-.die-heart {
+.die.heart.black {
   background-image: url('/images/dice/black/heart.svg');
 }
 
-.die-lightning {
+.die.lightning.black {
   background-image: url('/images/dice/black/lightning.svg');
 }
 
-.die-one {
+.die.one.black {
   background-image: url('/images/dice/black/one.svg');
 }
 
-.die-two {
+.die.two.black {
   background-image: url('/images/dice/black/two.svg');
 }
 
-.die-three {
+.die.three.black {
   background-image: url('/images/dice/black/three.svg');
 }
 
-.die-claw.die-index-7,
-.die-claw.die-index-8 {
+
+.die.claw.green {
   background-image: url('/images/dice/green/claw.svg');
 }
 
-.die-heart.die-index-7,
-.die-heart.die-index-8 {
+
+.die.heart.green {
   background-image: url('/images/dice/green/heart.svg');
 }
 
-.die-lightning.die-index-7,
-.die-lightning.die-index-8 {
+
+.die.lightning.green {
   background-image: url('/images/dice/green/lightning.svg');
 }
 
-.die-one.die-index-7,
-.die-one.die-index-8 {
+
+.die.one.green {
   background-image: url('/images/dice/green/one.svg');
 }
 
-.die-two.die-index-7,
-.die-two.die-index-8 {
+
+.die.two.green {
   background-image: url('/images/dice/green/two.svg');
 }
 
-.die-three.die-index-7,
-.die-three.die-index-8 {
+
+.die.three.green {
   background-image: url('/images/dice/green/three.svg');
 }
