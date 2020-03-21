@@ -19,7 +19,6 @@ defmodule KingOfTokyoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    live "/dice_roller", DiceRollerLive
   end
 
   # Other scopes may use custom stacks.
