@@ -32,17 +32,19 @@ defmodule KingOfTokyo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.12"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:phoenix_live_view, "~> 0.10.0"},
+      {:credo, "~> 1.3", rutime: false, only: [:dev, :test]},
+      {:dialyxir, "~> 1.0", runtime: false, only: [:dev, :test]},
+      {:ecto, "~> 3.3"},
       {:faker, "~> 0.13"},
       {:floki, ">= 0.0.0", only: :test},
-      {:credo, "~> 1.3.1", rutime: false, only: [:dev, :test]}
+      {:gettext, "~> 0.11"},
+      {:jason, "~> 1.0"},
+      {:phoenix, "~> 1.4.12"},
+      {:phoenix_html, "~> 2.11"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.10"},
+      {:phoenix_pubsub, "~> 1.1"},
+      {:plug_cowboy, "~> 2.0"}
     ]
   end
 end
