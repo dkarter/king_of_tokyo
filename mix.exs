@@ -41,7 +41,8 @@ defmodule KingOfTokyo.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.10.0"},
       {:faker, "~> 0.13"},
-      {:floki, ">= 0.0.0", only: :test}
+      {:floki, ">= 0.0.0", only: :test},
+      {:credo, "~> 1.3.1", rutime: false, only: [:dev, :test]}
     ]
   end
 end
