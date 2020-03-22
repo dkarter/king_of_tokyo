@@ -1,25 +1,13 @@
 defmodule KingOfTokyoWeb.DiceRollerComponent do
   use Phoenix.LiveComponent
 
-  @dice %{
-    1 => %{name: "one"},
-    2 => %{name: "two"},
-    3 => %{name: "three"},
-    4 => %{name: "lightning"},
-    5 => %{name: "claw"},
-    6 => %{name: "heart"}
-  }
+  alias KingOfTokyo.Dice
 
   def handle_event("toggle-dice", %{"dice-index" => dice_index}, socket) do
     current_selected_results = socket.assigns.dice_state.selected_roll_results
     dice_index = String.to_integer(dice_index)
 
-    selected_roll_results =
-      if Enum.member?(current_selected_results, dice_index) do
-        Enum.reject(current_selected_results, &(&1 == dice_index))
-      else
-        [dice_index | current_selected_results]
-      end
+    selected_roll_results = Dice.toggle_selected_dice_index(current_selected_results, dice_index)
 
     send(self(), {:update_selected_roll_results, selected_roll_results})
 
@@ -30,16 +18,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
     %{roll_result: roll_result, selected_roll_results: selected_roll_results} =
       socket.assigns.dice_state
 
-    roll_result =
-      roll_result
-      |> Enum.with_index()
-      |> Enum.map(fn {result, index} ->
-        if Enum.member?(selected_roll_results, index) do
-          result
-        else
-          roll_die()
-        end
-      end)
+    roll_result = Dice.re_roll(roll_result, selected_roll_results)
 
     send(self(), {:update_roll_result, roll_result})
 
@@ -48,8 +27,9 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
 
   def handle_event("roll", %{"dice_count" => dice_count}, socket) do
     roll_result =
-      1..String.to_integer(dice_count)
-      |> Enum.map(fn _ -> roll_die() end)
+      dice_count
+      |> String.to_integer()
+      |> Dice.roll()
 
     send(self(), {:update_roll_result, roll_result})
 
@@ -62,7 +42,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   end
 
   def render_die(assigns, {value, index}) do
-    die = @dice[value]
+    die_name = Dice.name(value)
 
     color = if index in [6, 7], do: "green", else: "black"
 
@@ -72,7 +52,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
     classes =
       [
         "die",
-        die.name,
+        die_name,
         color,
         selected
       ]
@@ -123,9 +103,5 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
 
   def mount(socket) do
     {:ok, assign(socket, dice_count: 6)}
-  end
-
-  defp roll_die do
-    Enum.random(1..6)
   end
 end
