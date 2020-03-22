@@ -1,15 +1,48 @@
 defmodule KingOfTokyoWeb.KingOfTokyoLive do
   use Phoenix.LiveView
 
-  alias KingOfTokyoWeb.PlayerCardComponent
   alias KingOfTokyoWeb.DiceRollerComponent
+  alias KingOfTokyoWeb.LobbyComponent
+  alias KingOfTokyoWeb.PlayerCardComponent
+  alias KingOfTokyoWeb.PlayerListComponent
+  alias KingOfTokyoWeb.Presence
+  alias KingOfTokyo.GameCode
+  alias KingOfTokyo.Player
+
+  def handle_info(%{event: "presence_diff"}, socket) do
+    topic = GameCode.to_topic(socket.assigns.code)
+
+    players =
+      Presence.list(topic)
+      |> Enum.map(fn {_user_id, data} ->
+        data[:metas]
+        |> List.first()
+      end)
+
+    {:noreply, assign(socket, players: players)}
+  end
+
+  def handle_info({:join_game, code: code, player_name: player_name}, socket) do
+    player = Player.new(player_name, :the_king)
+    topic = GameCode.to_topic(code)
+
+    KingOfTokyoWeb.Endpoint.subscribe(topic)
+
+    {:ok, _} = Presence.track(self(), topic, player.id, player)
+
+    {:noreply, assign(socket, code: code, player: player)}
+  end
 
   def handle_info({:update_player, player}, socket) do
     {:noreply, assign(socket, player: player)}
   end
 
   def handle_info({:update_roll_result, roll_result}, socket) do
-    dice_state = Map.put(socket.assigns.dice_state, :roll_result, roll_result)
+    dice_state =
+      socket.assigns.dice_state
+      |> Map.put(:roll_result, roll_result)
+      |> Map.update!(:roll_count, fn count -> count + 1 end)
+
     {:noreply, assign(socket, dice_state: dice_state)}
   end
 
@@ -23,31 +56,36 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def render(assigns) do
-    ~L"""
-    <div class="game-container">
-      <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player) %>
-      <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @dice_state) %>
-    </div>
-    """
+    if joined?(assigns) do
+      ~L"""
+      <div class="game-container">
+        <div class="main-panel">
+          <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player) %>
+          <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @dice_state) %>
+        </div>
+        <%= live_component(@socket, PlayerListComponent, players: @players) %>
+      </div>
+      """
+    else
+      ~L"""
+      <%= live_component(@socket, LobbyComponent, id: :lobby) %>
+      """
+    end
   end
 
   def mount(_params, _session, socket) do
     dice_state = initial_dice_state()
-
-    player = %{
-      name: "#{Faker.Name.En.first_name()} #{Faker.Name.En.last_name()}",
-      hearts: 10,
-      stars: 0
-    }
-
-    {:ok, assign(socket, dice_state: dice_state, player: player)}
+    {:ok, assign(socket, dice_state: dice_state, player: nil, players: [], code: nil)}
   end
 
   defp initial_dice_state do
     %{
       roll_result: [],
       selected_roll_results: [],
-      dice_count: 6
+      roll_count: 0
     }
   end
+
+  defp joined?(%{code: nil}), do: false
+  defp joined?(%{code: _}), do: true
 end

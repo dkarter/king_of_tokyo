@@ -11,11 +11,6 @@
   <body>
     <header>
       <section class="container">
-        <nav role="navigation">
-          <ul>
-            <li><a href="https://hexdocs.pm/phoenix/overview.html">Roll The Dice</a></li>
-          </ul>
-        </nav>
         <a href="#" class="logo">
           <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" alt="King of Tokyo"/>
         </a>

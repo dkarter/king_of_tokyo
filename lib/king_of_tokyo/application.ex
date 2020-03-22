@@ -9,9 +9,8 @@ defmodule KingOfTokyo.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      KingOfTokyoWeb.Endpoint
-      # Starts a worker by calling: KingOfTokyo.Worker.start_link(arg)
-      # {KingOfTokyo.Worker, arg},
+      KingOfTokyoWeb.Endpoint,
+      KingOfTokyoWeb.Presence
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

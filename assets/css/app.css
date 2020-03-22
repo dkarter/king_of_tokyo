@@ -13,9 +13,43 @@
   width: 8rem;
 }
 
+.game-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+header .container,
+main.container {
+  max-width: 80%;
+}
+
+#player-list {
+  border: solid 1px #6a6f79;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-left: 2rem;
+}
+
+#player-list .player {
+  border: solid 1px #6a6f79;
+  border-radius: 0.5rem;
+  box-shadow: 0.15rem 0.15rem 0.2rem rgba(0, 0, 0, .2);
+  padding: 1rem;
+  min-width: 20rem;
+}
+
+.lobby-container .game-code-field {
+  display: flex;
+}
+
+.lobby-container .game-code-field button {
+  margin-left: 1rem;
+}
+
 .player-card form {
   display: flex;
   justify-content: space-between;
+  min-width: 65rem;
 }
 
 .dice-roll form {
