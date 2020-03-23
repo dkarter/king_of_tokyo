@@ -7,25 +7,31 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        elixir: [1.10.2]
+        otp: [22.2.8]
+        
+        
     steps:
     - uses: actions/checkout@v2
       
     - name: Setup elixir
       uses: actions/setup-elixir@v1
       with:
-        elixir-version: 1.10.2 # Define the elixir version [required]
-        otp-version: 22.2.8 # Define the OTP version [required]
+        elixir-version: ${{ matrix.elixir }} # Define the elixir version [required]
+        otp-version: ${{ matrix.otp }} # Define the OTP version [required]
 
     - name: Retrieve Mix Dependencies Cache
       uses: actions/cache@v1
       id: mix-cache #id to use in retrieve action
       with:
         path: deps
-        key: ${{ runner.os }}-${{ matrix.otp-version }}-${{ matrix.elixir-version }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     
     - name: Install Mix Dependencies
       if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -48,7 +54,7 @@ jobs:
       id: plt-cache
       with:
         path: priv/plts
-        key: ${{ runner.os }}-${{ matrix.otp-version }}-${{ matrix.elixir-version }}-plts-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+        key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-plts-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
     
     - name: Create PLTs
       if: steps.plt-cache.outputs.cache-hit != 'true'
