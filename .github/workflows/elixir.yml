@@ -31,14 +31,17 @@ jobs:
         otp-version: 22.2.8 # Define the OTP version [required]
     - name: Install Dependencies
       run: |
+        export MIX_ENV=test
         mkdir -p priv/plts
         mix local.rebar --force
         mix local.hex --force
         mix deps.get
+    - name: Check Formatting
+      run: mix format --check-formatted
     - name: Run Credo
       run: mix credo --strict
     - name: Run Tests
       run: mix test
     - name: Run Dialyzer
-      run: mix dialyzer
+      run: mix dialyzer --halt-exit-status
 
