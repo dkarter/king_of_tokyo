@@ -1,5 +1,5 @@
 defmodule KingOfTokyo.DiceTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias KingOfTokyo.Dice
 
