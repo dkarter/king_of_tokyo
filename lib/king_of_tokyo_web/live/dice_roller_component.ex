@@ -1,4 +1,8 @@
 defmodule KingOfTokyoWeb.DiceRollerComponent do
+  @moduledoc """
+  Interface for rolling the King Of Tokyo Dice
+  """
+
   use Phoenix.LiveComponent
 
   alias KingOfTokyo.Dice

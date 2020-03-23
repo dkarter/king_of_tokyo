@@ -1,4 +1,8 @@
 defmodule KingOfTokyoWeb.PlayerListComponent do
+  @moduledoc """
+  Displays all players' stats
+  """
+
   use Phoenix.LiveComponent
 
   alias KingOfTokyo.Player

@@ -1,13 +1,17 @@
 defmodule KingOfTokyoWeb.KingOfTokyoLive do
+  @moduledoc """
+  LiveView implementation of King Of Tokyo
+  """
+
   use Phoenix.LiveView
 
+  alias KingOfTokyo.GameCode
+  alias KingOfTokyo.Player
   alias KingOfTokyoWeb.DiceRollerComponent
   alias KingOfTokyoWeb.LobbyComponent
   alias KingOfTokyoWeb.PlayerCardComponent
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
-  alias KingOfTokyo.GameCode
-  alias KingOfTokyo.Player
 
   def handle_info(%{event: "presence_diff"}, socket) do
     topic = GameCode.to_topic(socket.assigns.code)

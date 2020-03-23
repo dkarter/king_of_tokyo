@@ -1,4 +1,8 @@
 defmodule KingOfTokyoWeb.LobbyComponent do
+  @moduledoc """
+  UI for joining a game room
+  """
+
   use Phoenix.LiveComponent
 
   alias KingOfTokyo.GameCode

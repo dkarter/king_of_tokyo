@@ -1,4 +1,8 @@
 defmodule KingOfTokyoWeb.PlayerCardComponent do
+  @moduledoc """
+  Form for updating current player's attributes
+  """
+
   use Phoenix.LiveComponent
 
   alias KingOfTokyo.Player
