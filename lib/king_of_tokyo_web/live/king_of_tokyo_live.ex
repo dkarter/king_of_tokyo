@@ -14,6 +14,12 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
 
+  def handle_info(%{event: "players_updated", payload: _}, socket) do
+    topic = GameCode.to_topic(socket.assigns.code)
+    {:ok, players} = GameServer.list_players(topic)
+    {:noreply, assign(socket, players: players)}
+  end
+
   def handle_info(%{event: "presence_diff", payload: payload}, socket) do
     topic = GameCode.to_topic(socket.assigns.code)
 
@@ -22,9 +28,7 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
       :ok = GameServer.remove_player(topic, player_id)
     end)
 
-    {:ok, players} = GameServer.list_players(topic)
-
-    {:noreply, assign(socket, players: players)}
+    {:noreply, socket}
   end
 
   def handle_info({:join_game, code: code, player_name: player_name}, socket) do
@@ -33,9 +37,9 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
 
     KingOfTokyo.GameSupervisor.start_game(topic)
 
-    :ok = GameServer.add_player(topic, player)
-
     KingOfTokyoWeb.Endpoint.subscribe(topic)
+
+    :ok = GameServer.add_player(topic, player)
 
     {:ok, _} = Presence.track(self(), topic, player.id, player)
 
@@ -45,9 +49,8 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   def handle_info({:update_player, player}, socket) do
     topic = GameCode.to_topic(socket.assigns.code)
     :ok = GameServer.update_player(topic, player)
-    {:ok, players} = GameServer.list_players(topic)
 
-    {:noreply, assign(socket, player: player, players: players)}
+    {:noreply, assign(socket, player: player)}
   end
 
   def handle_info({:update_roll_result, roll_result}, socket) do

@@ -22,15 +22,21 @@ defmodule KingOfTokyo.GameServer do
   end
 
   def add_player(game_name, player) do
-    call_by_name(game_name, {:add_player, player})
+    with :ok <- call_by_name(game_name, {:add_player, player}) do
+      broadcast_players_updated!(game_name)
+    end
   end
 
   def update_player(game_name, player) do
-    call_by_name(game_name, {:update_player, player})
+    with :ok <- call_by_name(game_name, {:update_player, player}) do
+      broadcast_players_updated!(game_name)
+    end
   end
 
   def remove_player(game_name, player_id) do
-    call_by_name(game_name, {:remove_player, player_id})
+    with :ok <- call_by_name(game_name, {:remove_player, player_id}) do
+      broadcast_players_updated!(game_name)
+    end
   end
 
   def list_players(game_name) do
@@ -75,17 +81,6 @@ defmodule KingOfTokyo.GameServer do
     {:reply, {:ok, Game.list_players(state.game)}, state}
   end
 
-  defp cast_by_name(game_name, command) do
-    case game_pid(game_name) do
-      game_pid when is_pid(game_pid) ->
-        GenServer.cast(game_pid, command)
-        :ok
-
-      nil ->
-        {:error, :game_not_found}
-    end
-  end
-
   defp call_by_name(game_name, command) do
     case game_pid(game_name) do
       game_pid when is_pid(game_pid) ->
@@ -94,5 +89,9 @@ defmodule KingOfTokyo.GameServer do
       nil ->
         {:error, :game_not_found}
     end
+  end
+
+  defp broadcast_players_updated!(game_name) do
+    KingOfTokyoWeb.Endpoint.broadcast!(game_name, "players_updated", %{})
   end
 end
