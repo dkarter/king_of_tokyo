@@ -6,6 +6,7 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   use Phoenix.LiveView
 
   alias KingOfTokyo.GameCode
+  alias KingOfTokyo.GameServer
   alias KingOfTokyo.Player
   alias KingOfTokyoWeb.DiceRollerComponent
   alias KingOfTokyoWeb.LobbyComponent
@@ -13,15 +14,15 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
 
-  def handle_info(%{event: "presence_diff"}, socket) do
+  def handle_info(%{event: "presence_diff", payload: payload}, socket) do
     topic = GameCode.to_topic(socket.assigns.code)
 
-    players =
-      Presence.list(topic)
-      |> Enum.map(fn {_user_id, data} ->
-        data[:metas]
-        |> List.first()
-      end)
+    payload.leaves
+    |> Enum.each(fn {player_id, _} ->
+      :ok = GameServer.remove_player(topic, player_id)
+    end)
+
+    {:ok, players} = GameServer.list_players(topic)
 
     {:noreply, assign(socket, players: players)}
   end
@@ -29,6 +30,10 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   def handle_info({:join_game, code: code, player_name: player_name}, socket) do
     player = Player.new(player_name, :the_king)
     topic = GameCode.to_topic(code)
+
+    KingOfTokyo.GameSupervisor.start_game(topic)
+
+    :ok = GameServer.add_player(topic, player)
 
     KingOfTokyoWeb.Endpoint.subscribe(topic)
 
@@ -38,7 +43,11 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def handle_info({:update_player, player}, socket) do
-    {:noreply, assign(socket, player: player)}
+    topic = GameCode.to_topic(socket.assigns.code)
+    :ok = GameServer.update_player(topic, player)
+    {:ok, players} = GameServer.list_players(topic)
+
+    {:noreply, assign(socket, player: player, players: players)}
   end
 
   def handle_info({:update_roll_result, roll_result}, socket) do

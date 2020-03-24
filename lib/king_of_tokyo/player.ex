@@ -95,7 +95,7 @@ defmodule KingOfTokyo.Player do
     Map.put(player, :points, points)
   end
 
-  def character_name(%{character: character}) do
-    @characters[character]
+  def character_name(%__MODULE__{} = player) do
+    @characters[player.character]
   end
 end
