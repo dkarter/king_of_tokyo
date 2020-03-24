@@ -9,7 +9,8 @@ defmodule KingOfTokyo.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: dialyzer(Mix.env())
     ]
   end
 
@@ -47,4 +48,14 @@ defmodule KingOfTokyo.MixProject do
       {:plug_cowboy, "~> 2.0"}
     ]
   end
+
+  defp dialyzer(:test) do
+    [
+      plt_core_path: "priv/plts",
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+      ignore_warnings: ".dialyzer_ignore.exs"
+    ]
+  end
+
+  defp dialyzer(_), do: []
 end
