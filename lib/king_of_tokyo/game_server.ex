@@ -5,22 +5,10 @@ defmodule KingOfTokyo.GameServer do
 
   use GenServer
 
-  alias KingOfTokyo.Game
   alias KingOfTokyo.Dice
+  alias KingOfTokyo.Game
 
-  def start_link(game_name) do
-    GenServer.start(__MODULE__, nil, name: via_tuple(game_name))
-  end
-
-  def via_tuple(game_name) do
-    {:via, Registry, {KingOfTokyo.GameRegistry, game_name}}
-  end
-
-  def game_pid(game_name) do
-    game_name
-    |> via_tuple()
-    |> GenServer.whereis()
-  end
+  @garbage_collection_interval :timer.minutes(10)
 
   def add_player(game_name, player) do
     with :ok <- call_by_name(game_name, {:add_player, player}) do
@@ -86,9 +74,24 @@ defmodule KingOfTokyo.GameServer do
     end
   end
 
+  def start_link(game_name) do
+    GenServer.start(__MODULE__, game_name, name: via_tuple(game_name))
+  end
+
+  def via_tuple(game_name) do
+    {:via, Registry, {KingOfTokyo.GameRegistry, game_name}}
+  end
+
+  def game_pid(game_name) do
+    game_name
+    |> via_tuple()
+    |> GenServer.whereis()
+  end
+
   @impl GenServer
-  def init(nil) do
-    {:ok, %{game: Game.new()}}
+  def init(game_code) do
+    {:ok, timer} = :timer.send_interval(@garbage_collection_interval, :garbage_collect)
+    {:ok, %{game: Game.new(game_code), garbage_collector_timer: timer}}
   end
 
   @impl GenServer
@@ -161,6 +164,21 @@ defmodule KingOfTokyo.GameServer do
     dice_state = Dice.set_dice_count(state.game.dice_state, count)
     game = %{state.game | dice_state: dice_state}
     {:reply, {:ok, dice_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_info(:garbage_collect, state) do
+    player_ids =
+      state.game.code
+      |> KingOfTokyoWeb.Presence.list()
+      |> Enum.map(fn {player_id, _} -> player_id end)
+
+    if player_ids == [] do
+      :timer.cancel(state.garbage_collector_timer)
+      KingOfTokyo.GameSupervisor.stop_game(state.game.code)
+    end
+
+    {:noreply, state}
   end
 
   defp call_by_name(game_name, command) do

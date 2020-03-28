@@ -19,8 +19,11 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def handle_info(%{event: "players_updated", payload: _}, socket) do
-    topic = GameCode.to_topic(socket.assigns.code)
-    {:ok, players} = GameServer.list_players(topic)
+    {:ok, players} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.list_players()
+
     {:noreply, assign(socket, players: players)}
   end
 

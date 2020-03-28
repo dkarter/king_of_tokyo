@@ -14,11 +14,11 @@ defmodule KingOfTokyo.Game do
   @type t() :: %__MODULE__{
           players: list(Player.t()),
           dice_state: Dice.t(),
-          code: String.t()
+          code: String.t() | nil
         }
 
-  def new do
-    %__MODULE__{}
+  def new(code \\ nil) do
+    %__MODULE__{code: code}
   end
 
   @doc """

@@ -10,7 +10,6 @@ defmodule KingOfTokyo.DiceTest do
         |> Dice.set_dice_count(6)
         |> Dice.roll()
 
-
       assert length(result) == 6
       assert Enum.all?(result, fn res -> res > 0 && res < 7 end)
     end
