@@ -8,7 +8,9 @@ defmodule KingOfTokyo.GameServer do
   alias KingOfTokyo.Dice
   alias KingOfTokyo.Game
 
-  @garbage_collection_interval :timer.minutes(10)
+  require Logger
+
+  @garbage_collection_interval :timer.minutes(5)
 
   def add_player(game_name, player) do
     with :ok <- call_by_name(game_name, {:add_player, player}) do
@@ -74,7 +76,14 @@ defmodule KingOfTokyo.GameServer do
     end
   end
 
+  def presence_player_ids(game_name) do
+    game_name
+    |> KingOfTokyoWeb.Presence.list()
+    |> Enum.map(fn {player_id, _} -> player_id end)
+  end
+
   def start_link(game_name) do
+    Logger.info("Creating game server for: #{game_name}")
     GenServer.start(__MODULE__, game_name, name: via_tuple(game_name))
   end
 
@@ -168,14 +177,15 @@ defmodule KingOfTokyo.GameServer do
 
   @impl GenServer
   def handle_info(:garbage_collect, state) do
-    player_ids =
-      state.game.code
-      |> KingOfTokyoWeb.Presence.list()
-      |> Enum.map(fn {player_id, _} -> player_id end)
+    game_name = state.game.code
 
-    if player_ids == [] do
+    Logger.info("Running garbage collection for: #{game_name}")
+    presence_player_ids = presence_player_ids(game_name)
+
+    if presence_player_ids == [] do
+      Logger.info("No more players present on: #{game_name}, shutting down game server...")
       :timer.cancel(state.garbage_collector_timer)
-      KingOfTokyo.GameSupervisor.stop_game(state.game.code)
+      KingOfTokyo.GameSupervisor.stop_game(game_name)
     end
 
     {:noreply, state}
