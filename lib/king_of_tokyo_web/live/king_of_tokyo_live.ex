@@ -14,6 +14,10 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
 
+  def handle_info(%{event: "dice_updated", payload: dice_state}, socket) do
+    {:noreply, assign(socket, dice_state: dice_state)}
+  end
+
   def handle_info(%{event: "players_updated", payload: _}, socket) do
     topic = GameCode.to_topic(socket.assigns.code)
     {:ok, players} = GameServer.list_players(topic)
@@ -41,25 +45,63 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
 
     :ok = GameServer.add_player(topic, player)
 
-    {:ok, _} = Presence.track(self(), topic, player.id, player)
+    {:ok, _} = Presence.track(self(), topic, player.id, %{online_at: System.system_time(:second)})
 
     {:noreply, assign(socket, code: code, player: player)}
   end
 
   def handle_info({:update_player, player}, socket) do
-    topic = GameCode.to_topic(socket.assigns.code)
-    :ok = GameServer.update_player(topic, player)
+    :ok =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.update_player(player)
 
     {:noreply, assign(socket, player: player)}
   end
 
-  def handle_info({:update_roll_result, roll_result}, socket) do
-    dice_state =
-      socket.assigns.dice_state
-      |> Map.put(:roll_result, roll_result)
-      |> Map.update!(:roll_count, fn count -> count + 1 end)
+  def handle_info(:reset_dice, socket) do
+    {:ok, _dice_state} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.reset_dice()
 
-    {:noreply, assign(socket, dice_state: dice_state)}
+    {:noreply, socket}
+  end
+
+  def handle_info(:roll, socket) do
+    {:ok, _dice_state} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.roll_dice()
+
+    {:noreply, socket}
+  end
+
+  def handle_info(:re_roll, socket) do
+    {:ok, _dice_state} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.re_roll_dice()
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:set_dice_count, count}, socket) do
+    {:ok, _dice_state} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.set_dice_count(count)
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:toggle_selected_dice_index, index}, socket) do
+    {:ok, _dice_state} =
+      socket.assigns.code
+      |> GameCode.to_topic()
+      |> GameServer.toggle_selected_dice_index(index)
+
+    {:noreply, socket}
   end
 
   def handle_info({:update_selected_roll_results, selected_roll_results}, socket) do
@@ -68,7 +110,9 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def handle_info(:reset_dice_state, socket) do
-    {:noreply, assign(socket, dice_state: initial_dice_state())}
+    topic = GameCode.to_topic(socket.assigns.code)
+    GameServer.reset_dice(topic)
+    {:noreply, socket}
   end
 
   def render(assigns) do
@@ -90,16 +134,12 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def mount(_params, _session, socket) do
-    dice_state = initial_dice_state()
-    {:ok, assign(socket, dice_state: dice_state, player: nil, players: [], code: nil)}
-  end
+    initial_state =
+      KingOfTokyo.Game.new()
+      |> Map.put(:player, nil)
+      |> Map.to_list()
 
-  defp initial_dice_state do
-    %{
-      roll_result: [],
-      selected_roll_results: [],
-      roll_count: 0
-    }
+    {:ok, assign(socket, initial_state)}
   end
 
   defp joined?(%{code: nil}), do: false

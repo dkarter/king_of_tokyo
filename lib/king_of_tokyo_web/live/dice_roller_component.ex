@@ -8,40 +8,27 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   alias KingOfTokyo.Dice
 
   def handle_event("toggle-dice", %{"dice-index" => dice_index}, socket) do
-    current_selected_results = socket.assigns.dice_state.selected_roll_results
-    dice_index = String.to_integer(dice_index)
-
-    selected_roll_results = Dice.toggle_selected_dice_index(current_selected_results, dice_index)
-
-    send(self(), {:update_selected_roll_results, selected_roll_results})
-
+    send(self(), {:toggle_selected_dice_index, dice_index})
     {:noreply, socket}
   end
 
   def handle_event("re-roll", _, socket) do
-    %{roll_result: roll_result, selected_roll_results: selected_roll_results} =
-      socket.assigns.dice_state
-
-    roll_result = Dice.re_roll(roll_result, selected_roll_results)
-
-    send(self(), {:update_roll_result, roll_result})
-
+    send(self(), :re_roll)
     {:noreply, socket}
   end
 
-  def handle_event("roll", %{"dice_count" => dice_count}, socket) do
-    roll_result =
-      dice_count
-      |> String.to_integer()
-      |> Dice.roll()
+  def handle_event("roll", _, socket) do
+    send(self(), :roll)
+    {:noreply, socket}
+  end
 
-    send(self(), {:update_roll_result, roll_result})
-
-    {:noreply, assign(socket, dice_count: dice_count)}
+  def handle_event("update", %{"dice_count" => dice_count}, socket) do
+    send(self(), {:set_dice_count, dice_count})
+    {:noreply, socket}
   end
 
   def handle_event("reset", _, socket) do
-    send(self(), :reset_dice_state)
+    send(self(), :reset_dice)
     {:noreply, socket}
   end
 
@@ -89,23 +76,31 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   end
 
   def render(assigns) do
-    has_results = length(assigns.dice_state.roll_result) > 0
+    %{
+      dice_state: %{
+        roll_result: roll_result,
+        roll_count: roll_count,
+        dice_count: dice_count
+      }
+    } = assigns
+
+    has_results = length(roll_result) > 0
     roll_action = if has_results, do: "re-roll", else: "roll"
     dice_count_input_disabled = if has_results, do: "disabled", else: ""
 
     ~L"""
     <div class="dice-roll">
-      <form id="<%= @id %>" action="#" phx-submit="<%= roll_action %>" phx-target="#<%= @id %>">
-        <input type="number" <%= dice_count_input_disabled %> min="1" max="8" name="dice_count" placeholder="How many dice?" value="<%= @dice_count %>" />
+      <form id="<%= @id %>" action="#" phx-change="update" phx-submit="<%= roll_action %>" phx-target="#<%= @id %>">
+        <input type="number" <%= dice_count_input_disabled %> min="1" max="8" name="dice_count" placeholder="How many dice?" value="<%= dice_count %>" />
+        <div class="roll-count">
+          <div>Rolls</div>
+          <div><%= roll_count %></div>
+        </div>
         <button type="submit"><%= roll_action %></button>
         <%= render_reset_button(assigns) %>
       </form>
       <%= render_dice(assigns) %>
     </div>
     """
-  end
-
-  def mount(socket) do
-    {:ok, assign(socket, dice_count: 6)}
   end
 end

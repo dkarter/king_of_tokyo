@@ -5,35 +5,39 @@ defmodule KingOfTokyo.DiceTest do
 
   describe ".roll/1" do
     test "generate random numbers within allowed range for selected count" do
-      results = Dice.roll(5)
-      assert length(results) == 5
-      assert Enum.all?(results, fn res -> res > 0 && res < 7 end)
-    end
+      %{roll_result: result} =
+        Dice.new()
+        |> Dice.set_dice_count(6)
+        |> Dice.roll()
 
-    test "will roll at a maximum 8 dice" do
-      assert length(Dice.roll(9)) == 8
-    end
 
-    test "will roll at a minimum 1 die" do
-      assert [res] = Dice.roll(0)
-      assert is_integer(res)
+      assert length(result) == 6
+      assert Enum.all?(result, fn res -> res > 0 && res < 7 end)
     end
   end
 
   describe ".re_roll/2" do
     test "does not shuffle selected dice" do
-      [r0, r1, _, _, _, r5] = results = Dice.roll(6)
-      assert [^r0, ^r1, _, _, _, ^r5] = Dice.re_roll(results, [0, 5, 1])
+      dice =
+        %{roll_result: [r0, r1, _, _, _, r5]} =
+        Dice.new()
+        |> Dice.set_dice_count(6)
+        |> Dice.roll()
+        |> Dice.toggle_selected_dice_index([5, 1, 0])
+
+      assert %{roll_result: [^r0, ^r1, _, _, _, ^r5]} = Dice.re_roll(dice)
     end
   end
 
   describe ".toggle_selected_dice_index/2" do
     test "removes an index from the list if present" do
-      assert [1, 2] == Dice.toggle_selected_dice_index([1, 4, 2], 4)
+      dice = %Dice{selected_roll_results: [1, 4, 2]}
+      assert %{selected_roll_results: [1, 2]} = Dice.toggle_selected_dice_index(dice, 4)
     end
 
     test "adds an index to the list if not present" do
-      assert [3, 1, 4, 2] == Dice.toggle_selected_dice_index([1, 4, 2], 3)
+      dice = %Dice{selected_roll_results: [1, 4, 2]}
+      assert %{selected_roll_results: [3, 1, 4, 2]} = Dice.toggle_selected_dice_index(dice, 3)
     end
   end
 

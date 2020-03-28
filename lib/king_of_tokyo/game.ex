@@ -4,13 +4,18 @@ defmodule KingOfTokyo.Game do
   it
   """
 
+  alias KingOfTokyo.Dice
   alias KingOfTokyo.Player
 
-  defstruct players: []
+  defstruct code: nil,
+            players: [],
+            dice_state: %Dice{}
 
-  @typep t() :: %__MODULE__{
-           players: list(Player.t())
-         }
+  @type t() :: %__MODULE__{
+          players: list(Player.t()),
+          dice_state: Dice.t(),
+          code: String.t()
+        }
 
   def new do
     %__MODULE__{}
@@ -72,6 +77,10 @@ defmodule KingOfTokyo.Game do
     |> Enum.find(fn player ->
       String.downcase(player.name) == String.downcase(name)
     end)
+  end
+
+  def reset_dice(game) do
+    %{game | dice_state: Dice.new()}
   end
 
   defp get_player_by_id(game, player_id) do

@@ -6,6 +6,7 @@ defmodule KingOfTokyo.GameServer do
   use GenServer
 
   alias KingOfTokyo.Game
+  alias KingOfTokyo.Dice
 
   def start_link(game_name) do
     GenServer.start(__MODULE__, nil, name: via_tuple(game_name))
@@ -41,6 +42,48 @@ defmodule KingOfTokyo.GameServer do
 
   def list_players(game_name) do
     call_by_name(game_name, :list_players)
+  end
+
+  def get_dice_state(game_name) do
+    call_by_name(game_name, :get_dice_state)
+  end
+
+  def reset_dice(game_name) do
+    with {:ok, dice_state} <- call_by_name(game_name, :reset_dice) do
+      broadcast_dice_updated!(game_name, dice_state)
+      {:ok, dice_state}
+    end
+  end
+
+  def roll_dice(game_name) do
+    with {:ok, dice_state} <- call_by_name(game_name, :roll_dice) do
+      broadcast_dice_updated!(game_name, dice_state)
+      {:ok, dice_state}
+    end
+  end
+
+  def re_roll_dice(game_name) do
+    with {:ok, dice_state} <- call_by_name(game_name, :re_roll_dice) do
+      broadcast_dice_updated!(game_name, dice_state)
+      {:ok, dice_state}
+    end
+  end
+
+  @spec toggle_selected_dice_index(String.t(), integer()) ::
+          {:ok, Dice.t()} | {:error, :game_not_found}
+  def toggle_selected_dice_index(game_name, index) do
+    with {:ok, dice_state} <- call_by_name(game_name, {:toggle_selected_dice_index, index}) do
+      broadcast_dice_updated!(game_name, dice_state)
+      {:ok, dice_state}
+    end
+  end
+
+  @spec set_dice_count(String.t(), integer()) :: {:ok, Dice.t()} | {:error, :game_not_found}
+  def set_dice_count(game_name, count) do
+    with {:ok, dice_state} <- call_by_name(game_name, {:set_dice_count, count}) do
+      broadcast_dice_updated!(game_name, dice_state)
+      {:ok, dice_state}
+    end
   end
 
   @impl GenServer
@@ -81,6 +124,45 @@ defmodule KingOfTokyo.GameServer do
     {:reply, {:ok, Game.list_players(state.game)}, state}
   end
 
+  @impl GenServer
+  def handle_call(:get_dice_state, _from, state) do
+    {:reply, {:ok, state.game.dice_state}, state}
+  end
+
+  @impl GenServer
+  def handle_call(:reset_dice, _from, state) do
+    game = Game.reset_dice(state.game)
+    {:reply, {:ok, game.dice_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call(:roll_dice, _from, state) do
+    dice_state = Dice.roll(state.game.dice_state)
+    game = %{state.game | dice_state: dice_state}
+    {:reply, {:ok, dice_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call(:re_roll_dice, _from, state) do
+    dice_state = Dice.re_roll(state.game.dice_state)
+    game = %{state.game | dice_state: dice_state}
+    {:reply, {:ok, dice_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call({:toggle_selected_dice_index, index}, _from, state) do
+    dice_state = Dice.toggle_selected_dice_index(state.game.dice_state, index)
+    game = %{state.game | dice_state: dice_state}
+    {:reply, {:ok, dice_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call({:set_dice_count, count}, _from, state) do
+    dice_state = Dice.set_dice_count(state.game.dice_state, count)
+    game = %{state.game | dice_state: dice_state}
+    {:reply, {:ok, dice_state}, %{state | game: game}}
+  end
+
   defp call_by_name(game_name, command) do
     case game_pid(game_name) do
       game_pid when is_pid(game_pid) ->
@@ -89,6 +171,10 @@ defmodule KingOfTokyo.GameServer do
       nil ->
         {:error, :game_not_found}
     end
+  end
+
+  defp broadcast_dice_updated!(game_name, dice_state) do
+    KingOfTokyoWeb.Endpoint.broadcast!(game_name, "dice_updated", dice_state)
   end
 
   defp broadcast_players_updated!(game_name) do
