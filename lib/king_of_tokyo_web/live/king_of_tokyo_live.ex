@@ -19,10 +19,12 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def handle_info(%{event: "players_updated", payload: _}, socket) do
-    {:ok, players} =
-      socket.assigns.code
-      |> GameCode.to_topic()
-      |> GameServer.list_players()
+    topic = GameCode.to_topic(socket.assigns.code)
+
+    {:ok, players} = GameServer.list_players(topic)
+    presence_player_ids = GameServer.presence_player_ids(topic)
+
+    players = Enum.filter(players, fn %{id: id} -> id in presence_player_ids end)
 
     {:noreply, assign(socket, players: players)}
   end
@@ -38,6 +40,14 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
     {:noreply, socket}
   end
 
+  def handle_info({:set_flash, {level, message}}, socket) do
+    {:noreply, put_temporary_flash(socket, level, message)}
+  end
+
+  def handle_info({:clear_flash, _level}, socket) do
+    {:noreply, clear_flash(socket)}
+  end
+
   def handle_info({:join_game, code: code, player_name: player_name}, socket) do
     player = Player.new(player_name, :the_king)
     topic = GameCode.to_topic(code)
@@ -46,11 +56,22 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
 
     KingOfTokyoWeb.Endpoint.subscribe(topic)
 
-    :ok = GameServer.add_player(topic, player)
+    socket =
+      case GameServer.add_player(topic, player) do
+        :ok ->
+          {:ok, _} =
+            Presence.track(self(), topic, player.id, %{online_at: System.system_time(:second)})
 
-    {:ok, _} = Presence.track(self(), topic, player.id, %{online_at: System.system_time(:second)})
+          socket
+          |> assign(code: code, player: player)
+          |> put_temporary_flash(:info, "Joined successfully")
 
-    {:noreply, assign(socket, code: code, player: player)}
+        {:error, :name_taken} ->
+          socket
+          |> put_temporary_flash(:error, "name already taken, please choose a different name")
+      end
+
+    {:noreply, socket}
   end
 
   def handle_info({:update_player, player}, socket) do
@@ -118,7 +139,7 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
     {:noreply, socket}
   end
 
-  def render(assigns) do
+  def render_game_or_lobby(assigns) do
     if joined?(assigns) do
       ~L"""
       <div class="game-container">
@@ -136,6 +157,14 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
     end
   end
 
+  def render(assigns) do
+    ~L"""
+    <p class="alert alert-info" role="alert"><%= live_flash(@flash, :info) %></p>
+    <p class="alert alert-danger" role="alert"><%= live_flash(@flash, :error) %></p>
+    <%= render_game_or_lobby(assigns) %>
+    """
+  end
+
   def mount(_params, _session, socket) do
     initial_state =
       KingOfTokyo.Game.new()
@@ -147,4 +176,10 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
 
   defp joined?(%{code: nil}), do: false
   defp joined?(%{code: _}), do: true
+
+  defp put_temporary_flash(socket, level, message) do
+    :timer.send_after(:timer.seconds(3), {:clear_flash, level})
+
+    put_flash(socket, level, message)
+  end
 end
