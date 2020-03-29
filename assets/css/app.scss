@@ -25,16 +25,21 @@ main.container {
 #player-list {
   border: solid 1px #6a6f79;
   border-radius: 0.5rem;
-  padding: 1rem;
+  height: max-content;
   margin-left: 2rem;
-}
-
-#player-list .player {
-  border: solid 1px #6a6f79;
-  border-radius: 0.5rem;
-  box-shadow: 0.15rem 0.15rem 0.2rem rgba(0, 0, 0, 0.2);
   padding: 1rem;
-  min-width: 20rem;
+
+  .player {
+    border: solid 1px #6a6f79;
+    border-radius: 0.5rem;
+    box-shadow: 0.15rem 0.15rem 0.2rem rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    min-width: 20rem;
+
+    &:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 .lobby-container {
