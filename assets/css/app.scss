@@ -1,0 +1,162 @@
+/* This file is for your main application css. */
+
+@import './phoenix.css';
+
+@import '../../deps/phoenix_live_view/assets/css/live_view.css';
+
+.button.danger {
+  background-color: #a94442;
+  border: none;
+}
+
+.logo img {
+  width: 8rem;
+}
+
+.game-container {
+  display: flex;
+}
+
+header .container,
+main.container {
+  max-width: 80%;
+}
+
+#player-list {
+  border: solid 1px #6a6f79;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-left: 2rem;
+}
+
+#player-list .player {
+  border: solid 1px #6a6f79;
+  border-radius: 0.5rem;
+  box-shadow: 0.15rem 0.15rem 0.2rem rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  min-width: 20rem;
+}
+
+.lobby-container {
+  label {
+    max-width: 40rem;
+  }
+
+  .game-code-field {
+    display: flex;
+
+    button {
+      margin-left: 1rem;
+    }
+  }
+
+  .player-details {
+    display: flex;
+
+    label {
+      margin-right: 1rem;
+    }
+  }
+}
+
+.player-card form {
+  display: flex;
+  justify-content: space-between;
+  min-width: 65rem;
+}
+
+.dice-roll {
+  form {
+    align-items: center;
+    display: flex;
+
+    * {
+      margin-bottom: 0;
+    }
+
+    button {
+      margin-left: 1rem;
+    }
+
+    input[name='dice_count'] {
+      width: 6rem;
+    }
+  }
+
+  .roll-count {
+    display: flex;
+    align-items: center;
+    margin: 0 1rem;
+
+    > div:first-child {
+      font-weight: bold;
+      margin-right: 1rem;
+    }
+  }
+}
+
+.dice {
+  display: flex;
+}
+
+.die {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 8rem;
+  margin-right: 1rem;
+  width: 8rem;
+
+  &.selected {
+    border: 3px solid gold;
+    border-radius: 0.8rem;
+  }
+
+  &.claw.black {
+    background-image: url('/images/dice/black/claw.svg');
+  }
+
+  &.heart.black {
+    background-image: url('/images/dice/black/heart.svg');
+  }
+
+  &.lightning.black {
+    background-image: url('/images/dice/black/lightning.svg');
+  }
+
+  &.one.black {
+    background-image: url('/images/dice/black/one.svg');
+  }
+
+  &.two.black {
+    background-image: url('/images/dice/black/two.svg');
+  }
+
+  &.three.black {
+    background-image: url('/images/dice/black/three.svg');
+  }
+
+  &.claw.green {
+    background-image: url('/images/dice/green/claw.svg');
+  }
+
+  &.heart.green {
+    background-image: url('/images/dice/green/heart.svg');
+  }
+
+  &.lightning.green {
+    background-image: url('/images/dice/green/lightning.svg');
+  }
+
+  &.one.green {
+    background-image: url('/images/dice/green/one.svg');
+  }
+
+  &.two.green {
+    background-image: url('/images/dice/green/two.svg');
+  }
+
+  &.three.green {
+    background-image: url('/images/dice/green/three.svg');
+  }
+}

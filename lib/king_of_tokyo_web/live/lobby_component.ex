@@ -67,11 +67,13 @@ defmodule KingOfTokyoWeb.LobbyComponent do
     ~L"""
     <div class="lobby-container">
       <form id="<%= @id %>" phx-change="update" phx-submit="join-game" phx-target="#<%= @id %>">
-        <label>
-          Player Name:
-          <input name="player_name" type="text" value="<%= @player_name %>" />
-        </label>
-        <%= render_character_select(assigns) %>
+        <section class="player-details">
+          <label>
+            Player Name:
+            <input name="player_name" type="text" value="<%= @player_name %>" />
+          </label>
+          <%= render_character_select(assigns) %>
+        </section>
         <label>
           Game Code:
           <div class="game-code-field">
