@@ -19,8 +19,16 @@ defmodule KingOfTokyo.GameTest do
     end
 
     test "returns an error if player with the same name already exists" do
-      game = Game.new() |> Map.put(:players, [Player.new("juan", :the_king)])
+      game = Game.new() |> Map.put(:players, [Player.new("juan", :giga_zaur)])
       assert {:error, :name_taken} = Game.add_player(game, Player.new("Juan", :the_king))
+    end
+
+    test "returns an error if player with the same character already exists" do
+      {:ok, game} =
+        Game.new()
+        |> Game.add_player(Player.new("Mufasa", :the_king))
+
+      assert {:error, :character_taken} = Game.add_player(game, Player.new("Simba", :the_king))
     end
   end
 

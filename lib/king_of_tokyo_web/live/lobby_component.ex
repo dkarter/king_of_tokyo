@@ -6,6 +6,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   use Phoenix.LiveComponent
 
   alias KingOfTokyo.GameCode
+  alias KingOfTokyo.Player
 
   def handle_event("join-game", %{"code" => code}, socket) when byte_size(code) < 2 do
     send(self(), {:put_temporary_flash, :error, "code must be at least 2 characters long"})
@@ -17,18 +18,49 @@ defmodule KingOfTokyoWeb.LobbyComponent do
     {:noreply, socket}
   end
 
-  def handle_event("join-game", %{"code" => code, "player_name" => player_name}, socket) do
-    send(self(), {:join_game, %{code: code, player_name: player_name}})
+  def handle_event("join-game", fields, socket) do
+    %{"code" => code, "player_name" => player_name, "character" => character} = fields
+
+    payload = %{
+      code: code,
+      player_name: player_name,
+      character: String.to_existing_atom(character)
+    }
+
+    send(self(), {:join_game, payload})
 
     {:noreply, socket}
   end
 
-  def handle_event("update", %{"code" => code, "player_name" => player_name}, socket) do
-    {:noreply, assign(socket, code: code, player_name: player_name)}
+  def handle_event("update", fields, socket) do
+    %{"code" => code, "player_name" => player_name, "character" => character} = fields
+
+    socket =
+      socket
+      |> assign(
+        code: code,
+        player_name: player_name,
+        character: String.to_existing_atom(character)
+      )
+
+    {:noreply, socket}
   end
 
   def handle_event("generate-code", _, socket) do
     {:noreply, assign(socket, code: GameCode.generate())}
+  end
+
+  def render_character_select(assigns) do
+    ~L"""
+    <label>
+      <div>Character:</div>
+      <select name="character" onchange="this.blur()">
+        <%= for {value, name} <- Player.characters() do %>
+          <option value="<%= value %>" <%= if value == @character, do: "selected" %>><%= name %></option>
+        <% end %>
+      </select>
+    </label>
+    """
   end
 
   def render(assigns) do
@@ -39,6 +71,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
           Player Name:
           <input name="player_name" type="text" value="<%= @player_name %>" />
         </label>
+        <%= render_character_select(assigns) %>
         <label>
           Game Code:
           <div class="game-code-field">
@@ -53,6 +86,6 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, code: "", player_name: "")}
+    {:ok, assign(socket, code: "", player_name: "", character: :the_king)}
   end
 end

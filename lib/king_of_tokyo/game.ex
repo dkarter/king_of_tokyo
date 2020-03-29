@@ -24,13 +24,18 @@ defmodule KingOfTokyo.Game do
   @doc """
   Adds a new player to the game if one with a similar name does not exist
   """
-  @spec add_player(t(), Player.t()) :: {:ok, t()} | {:error, :name_taken}
+  @spec add_player(t(), Player.t()) :: {:ok, t()} | {:error, :name_taken | :character_taken}
   def add_player(game, player) do
-    case find_player_by_name(game, player.name) do
+    %{name: name, character: character} = player
+
+    case find_player(game, %{name: {:case_insensitive, name}, character: character}, match: :any) do
       nil ->
         {:ok, Map.update!(game, :players, &[player | &1])}
 
-      _ ->
+      %Player{character: ^character} ->
+        {:error, :character_taken}
+
+      %Player{} ->
         {:error, :name_taken}
     end
   end
@@ -72,11 +77,26 @@ defmodule KingOfTokyo.Game do
   @spec list_players(t()) :: list(Player.t())
   def list_players(game), do: game.players
 
-  defp find_player_by_name(game, name) do
+  defp find_player(game, %{} = attrs, match: :any) do
     game.players
     |> Enum.find(fn player ->
-      String.downcase(player.name) == String.downcase(name)
+      Enum.any?(attrs, &has_equal_attribute?(player, &1))
     end)
+  end
+
+  defp find_player(game, %{} = attrs) do
+    game.players
+    |> Enum.find(fn player ->
+      Enum.all?(attrs, &has_equal_attribute?(player, &1))
+    end)
+  end
+
+  defp has_equal_attribute?(%{} = map, {key, {:case_insensitive, value}}) when is_binary(value) do
+    String.downcase(Map.get(map, key, "")) == String.downcase(value)
+  end
+
+  defp has_equal_attribute?(%{} = map, {key, value}) do
+    Map.get(map, key) == value
   end
 
   def reset_dice(game) do
@@ -84,9 +104,7 @@ defmodule KingOfTokyo.Game do
   end
 
   defp get_player_by_id(game, player_id) do
-    game.players
-    |> Enum.find(&(&1.id == player_id))
-    |> case do
+    case find_player(game, %{id: player_id}) do
       %Player{} = player -> {:ok, player}
       nil -> {:error, :player_not_found}
     end

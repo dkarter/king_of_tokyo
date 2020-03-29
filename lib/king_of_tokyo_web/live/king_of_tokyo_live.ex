@@ -45,11 +45,13 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   end
 
   def handle_info({:clear_flash, level}, socket) do
-    {:noreply, clear_flash(socket, level)}
+    {:noreply, clear_flash(socket, Atom.to_string(level))}
   end
 
-  def handle_info({:join_game, %{code: code, player_name: player_name}}, socket) do
-    player = Player.new(player_name, :the_king)
+  def handle_info({:join_game, attrs}, socket) do
+    %{code: code, player_name: player_name, character: character} = attrs
+
+    player = Player.new(player_name, character)
     topic = GameCode.to_topic(code)
 
     KingOfTokyo.GameSupervisor.start_game(topic)
@@ -66,9 +68,13 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
           |> assign(code: code, player: player)
           |> put_temporary_flash(:info, "Joined successfully")
 
+        {:error, :character_taken} ->
+          socket
+          |> put_temporary_flash(:error, "Character already taken, choose another")
+
         {:error, :name_taken} ->
           socket
-          |> put_temporary_flash(:error, "name already taken, please choose a different name")
+          |> put_temporary_flash(:error, "Name already taken, please choose a different name")
       end
 
     {:noreply, socket}

@@ -11,7 +11,7 @@ defmodule KingOfTokyo.Player do
     cyber_kitty: "Cyber Kitty",
     space_pinguin: "Space Pinguin",
     meka_dragon: "Meka Dragon",
-    kraken: "Krakeen",
+    kraken: "Kraken",
     giga_zaur: "Giga Zaur",
     alienoid: "Alienoid"
   }
@@ -98,4 +98,6 @@ defmodule KingOfTokyo.Player do
   def character_name(%__MODULE__{} = player) do
     @characters[player.character]
   end
+
+  def characters, do: @characters
 end
