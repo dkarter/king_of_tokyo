@@ -40,15 +40,15 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
     {:noreply, socket}
   end
 
-  def handle_info({:set_flash, {level, message}}, socket) do
+  def handle_info({:put_temporary_flash, level, message}, socket) do
     {:noreply, put_temporary_flash(socket, level, message)}
   end
 
-  def handle_info({:clear_flash, _level}, socket) do
-    {:noreply, clear_flash(socket)}
+  def handle_info({:clear_flash, level}, socket) do
+    {:noreply, clear_flash(socket, level)}
   end
 
-  def handle_info({:join_game, code: code, player_name: player_name}, socket) do
+  def handle_info({:join_game, %{code: code, player_name: player_name}}, socket) do
     player = Player.new(player_name, :the_king)
     topic = GameCode.to_topic(code)
 

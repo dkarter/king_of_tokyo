@@ -7,8 +7,18 @@ defmodule KingOfTokyoWeb.LobbyComponent do
 
   alias KingOfTokyo.GameCode
 
+  def handle_event("join-game", %{"code" => code}, socket) when byte_size(code) < 2 do
+    send(self(), {:put_temporary_flash, :error, "code must be at least 2 characters long"})
+    {:noreply, socket}
+  end
+
+  def handle_event("join-game", %{"player_name" => name}, socket) when byte_size(name) < 2 do
+    send(self(), {:put_temporary_flash, :error, "name must be at least 2 characters long"})
+    {:noreply, socket}
+  end
+
   def handle_event("join-game", %{"code" => code, "player_name" => player_name}, socket) do
-    send(self(), {:join_game, code: code, player_name: player_name})
+    send(self(), {:join_game, %{code: code, player_name: player_name}})
 
     {:noreply, socket}
   end
