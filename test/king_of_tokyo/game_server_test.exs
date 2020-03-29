@@ -20,12 +20,25 @@ defmodule KingOfTokyo.GameServerTest do
       assert {:ok, [^player]} = GameServer.list_players(game_id)
     end
 
-    test "returns an error if a player with the same name already exists" do
+    test "returns an error if a player with the same character already exists" do
       game_id = Ecto.UUID.generate()
       player = Player.new("Joe", :the_king)
       {:ok, _pid} = GameServer.start_link(game_id)
       assert :ok = GameServer.add_player(game_id, player)
-      assert {:error, :name_taken} = GameServer.add_player(game_id, player)
+      assert {:error, :character_taken} = GameServer.add_player(game_id, player)
+      assert {:ok, [^player]} = GameServer.list_players(game_id)
+    end
+
+    test "returns an error if a player with the same name already exists" do
+      game_id = Ecto.UUID.generate()
+      player = Player.new("Joe", :the_king)
+      {:ok, _pid} = GameServer.start_link(game_id)
+
+      assert :ok = GameServer.add_player(game_id, player)
+
+      assert {:error, :name_taken} =
+               GameServer.add_player(game_id, Player.new("Joe", :meka_dragon))
+
       assert {:ok, [^player]} = GameServer.list_players(game_id)
     end
   end

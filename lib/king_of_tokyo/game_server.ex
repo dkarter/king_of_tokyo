@@ -111,6 +111,9 @@ defmodule KingOfTokyo.GameServer do
 
       {:error, :name_taken} = error ->
         {:reply, error, state}
+
+      {:error, :character_taken} = error ->
+        {:reply, error, state}
     end
   end
 
