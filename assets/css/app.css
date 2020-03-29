@@ -15,7 +15,6 @@
 
 .game-container {
   display: flex;
-  justify-content: space-between;
 }
 
 header .container,
@@ -53,11 +52,31 @@ main.container {
 }
 
 .dice-roll form {
+  align-items: center;
   display: flex;
+}
+
+.dice-roll form * {
+  margin-bottom: 0;
+}
+
+.dice-roll form input[name="dice_count"] {
+  width: 6rem;
 }
 
 .dice-roll button {
   margin-left: 1rem;
+}
+
+.dice-roll .roll-count {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.dice-roll .roll-count div:first-child {
+  font-weight: bold;
+  margin-right: 1rem;
 }
 
 .dice {

@@ -10,7 +10,8 @@ defmodule KingOfTokyo.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      dialyzer: dialyzer(Mix.env())
+      dialyzer: dialyzer(Mix.env()),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -36,6 +37,7 @@ defmodule KingOfTokyo.MixProject do
       {:credo, "~> 1.3", rutime: false, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", runtime: false, only: [:dev, :test]},
       {:ecto, "~> 3.3"},
+      {:excoveralls, "~> 0.12", only: :test},
       {:faker, "~> 0.13"},
       {:floki, ">= 0.0.0", only: :test},
       {:gettext, "~> 0.11"},

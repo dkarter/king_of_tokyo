@@ -10,7 +10,9 @@ defmodule KingOfTokyo.Application do
     children = [
       # Start the endpoint when the application starts
       KingOfTokyoWeb.Endpoint,
-      KingOfTokyoWeb.Presence
+      KingOfTokyoWeb.Presence,
+      {Registry, keys: :unique, name: KingOfTokyo.GameRegistry},
+      KingOfTokyo.GameSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

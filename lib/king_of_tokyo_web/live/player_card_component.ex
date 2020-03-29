@@ -28,7 +28,7 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
     <div class="player-card">
       <form id="<%= form_id %>" action="#" phx-change="update-player" phx-target="#<%= form_id %>">
         <div>Name: <input name="name" type="text" value="<%= @player.name %>" /></div>
-        <div>Hearts: <input name="health" type="number" min="0" max="15" value="<%= @player.health %>" /></div>
+        <div>Hearts: <input name="health" type="number" min="0" max="12" value="<%= @player.health %>" /></div>
         <div>Stars: <input name="points" type="number" min="0" max="20" value="<%= @player.points %>" /></div>
       </form>
     </div>
