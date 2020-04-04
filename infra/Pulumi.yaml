@@ -1,0 +1,14 @@
+name: king-of-tokyo
+runtime: nodejs
+description: multiplayer game
+template:
+    config:
+        digitalocean:token:
+          description: Your DigitalOcean personal access token.
+          secret: true
+        sshKeyName:
+          description: Your SSH key name.
+        sshPubKeyFilename:
+          description: Your SSH public key filename
+        domainName:
+          description: Domain name for the server
