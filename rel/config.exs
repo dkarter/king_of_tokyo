@@ -8,14 +8,13 @@
 |> Enum.map(&Code.eval_file(&1))
 
 use Distillery.Releases.Config,
-    # This sets the default release built by `mix distillery.release`
-    default_release: :default,
-    # This sets the default environment used by `mix distillery.release`
-    default_environment: Mix.env()
+  # This sets the default release built by `mix distillery.release`
+  default_release: :default,
+  # This sets the default environment used by `mix distillery.release`
+  default_environment: Mix.env()
 
 # For a full list of config options for both releases
 # and environments, visit https://hexdocs.pm/distillery/config/distillery.html
-
 
 # You may define one or more environments in this file,
 # an environment's settings will override those of a release
@@ -29,16 +28,16 @@ environment :dev do
   # It is recommended that you build with MIX_ENV=prod and pass
   # the --env flag to Distillery explicitly if you want to use
   # dev mode.
-  set dev_mode: true
-  set include_erts: false
-  set cookie: :"R?TPXLOD^m~UimJe|*D^8&3V$bnXHNWa(~M>YXLwSDlJ5$bO$FeLRpsHUF`V7vs6"
+  set(dev_mode: true)
+  set(include_erts: false)
+  set(cookie: :"R?TPXLOD^m~UimJe|*D^8&3V$bnXHNWa(~M>YXLwSDlJ5$bO$FeLRpsHUF`V7vs6")
 end
 
 environment :prod do
-  set include_erts: true
-  set include_src: false
-  set cookie: :"$cdp}4pPR|Wy7.B>w7{}zQZc$]pH?sXCPM;[WLJa)>d@;n_}G6]7$YP6Fyhw1XoB"
-  set vm_args: "rel/vm.args"
+  set(include_erts: true)
+  set(include_src: false)
+  set(cookie: :"$cdp}4pPR|Wy7.B>w7{}zQZc$]pH?sXCPM;[WLJa)>d@;n_}G6]7$YP6Fyhw1XoB")
+  set(vm_args: "rel/vm.args")
 end
 
 # You may define one or more releases in this file.
@@ -47,9 +46,11 @@ end
 # will be used by default
 
 release :king_of_tokyo do
-  set version: current_version(:king_of_tokyo)
-  set applications: [
-    :runtime_tools
-  ]
-end
+  set(version: current_version(:king_of_tokyo))
 
+  set(
+    applications: [
+      :runtime_tools
+    ]
+  )
+end
