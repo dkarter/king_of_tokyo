@@ -45,6 +45,6 @@ symlink_static(){
   status "Symlinking statics"
   __sync_remote "
     set -e
-    ln -sfn ~/$DELIVER_TO/$APP/lib/$VERSION/priv/static ~/$DELIVER_TO
+    ln -sfn $DELIVER_TO/$APP/lib/$VERSION/priv/static $DELIVER_TO
   "
 }
