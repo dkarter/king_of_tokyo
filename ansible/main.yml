@@ -112,6 +112,44 @@
         owner: "{{ username }}"
         group: "{{ username }}"
 
+    - name: Remove the default nginx app's config
+      file:
+        path: /etc/nginx/sites-available/default
+        state: absent
+
+    - name: Remove the default nginx app's symlink if it exists
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Copy nginx.conf
+      template:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+
+    - name: Configure nginx for the app
+      template:
+        src: "theking.nginx"
+        dest: "/etc/nginx/sites-available/theking"
+        group: "{{ username }}"
+        owner: "{{ username }}"
+        force: yes
+
+    - name: Enable the app
+      file:
+        src: "/etc/nginx/sites-available/theking"
+        dest: "/etc/nginx/sites-enabled/theking"
+        state: link
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+      changed_when: >
+        "Will always run, don't show that it changed" == 1
+
   # use let's encrypt's staging and only at the end
   handlers:
     - name: restart ssh

@@ -1,3 +1,5 @@
+# vim: ft=sh
+
 APP="king_of_tokyo"
 
 BUILD_HOST="theking.live"
@@ -8,6 +10,7 @@ PRODUCTION_HOSTS="theking.live"
 PRODUCTION_USER="deploy"
 DELIVER_TO="/home/deploy/app_release"
 
+GIT_CLEAN_PATHS="priv/static"
 
 pre_erlang_get_and_update_deps() {
   local _prod_secret_path="/home/$BUILD_USER/app_config/prod.secret.exs"
@@ -17,4 +20,31 @@ pre_erlang_get_and_update_deps() {
       ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
     "
   fi
+}
+
+# =-====================================================
+
+pre_erlang_clean_compile() {
+  status "Build js"
+  __sync_remote "
+    set -e
+    cd '$BUILD_AT'
+    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD build_js $SILENCE
+  "
+}
+
+post_extract_release_archive() {
+  symlink_static
+}
+
+post_upgrade_release() {
+  symlink_static
+}
+
+symlink_static(){
+  status "Symlinking statics"
+  __sync_remote "
+    set -e
+    ln -sfn ~/$DELIVER_TO/$APP/lib/$VERSION/priv/static ~/$DELIVER_TO
+  "
 }
