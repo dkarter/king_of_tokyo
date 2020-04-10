@@ -69,6 +69,22 @@
         state: present
         backup: yes
 
+    - name: Add Yarn repo key
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: Add Yarn repo
+      apt_repository:
+        repo: 'deb https://dl.yarnpkg.com/debian/ stable main'
+        state: present
+
+    - name: Install Yarn
+      apt:
+        update_cache: yes
+        state: present
+        pkg: yarn
+
     - name: Check if Erlang is Installed
       command: dpkg-query -W esl-erlang
       register: erlang_check_deb
@@ -149,6 +165,7 @@
         state: restarted
       changed_when: >
         "Will always run, don't show that it changed" == 1
+
 
   # use let's encrypt's staging and only at the end
   handlers:
