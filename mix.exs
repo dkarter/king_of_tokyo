@@ -4,14 +4,15 @@ defmodule KingOfTokyo.MixProject do
   def project do
     [
       app: :king_of_tokyo,
-      version: "0.1.0",
-      elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
-      start_permanent: Mix.env() == :prod,
       deps: deps(),
       dialyzer: dialyzer(Mix.env()),
-      test_coverage: [tool: ExCoveralls]
+      elixir: "~> 1.5",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      releases: releases(),
+      start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
+      version: "0.1.0"
     ]
   end
 
@@ -47,7 +48,9 @@ defmodule KingOfTokyo.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.10"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:edeliver, "~> 1.8.0"},
+      {:distillery, "~> 2.1.1"}
     ]
   end
 
@@ -60,4 +63,13 @@ defmodule KingOfTokyo.MixProject do
   end
 
   defp dialyzer(_), do: []
+
+  defp releases do
+    [
+      king_of_tokyo: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent]
+      ]
+    ]
+  end
 end

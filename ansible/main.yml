@@ -1,0 +1,120 @@
+---
+# - create deploy user (with messed up password)
+# - disable pass auth
+# - setup easy sudo
+# - install stuff
+#   - fail2ban
+#   - elixir (maybe)
+#   - erlang (maybe)
+#   - lets encrypt (there are galaxy roles for that)
+#     - setup auto-renew (might just be a flag in the 3rd party role)
+# - create
+#   - init.d (copy that file)
+- hosts: web
+  vars:
+    - username: deploy
+    - packages:
+      - fail2ban
+      - git
+      - nodejs
+      - neovim
+      - nginx
+
+  gather_facts: no
+  remote_user: root
+
+  tasks:
+    - name: Create Deploy User
+      user:
+        name: '{{ username }}'
+        createhome: yes
+        state: present
+        shell: /bin/bash
+      register: deployuser
+
+    - name: Disable password for deploy on creation
+      shell: /usr/bin/passwd -l '{{ username }}'
+      when: deployuser.changed
+
+    - name: Deploy SSH Key
+      authorized_key:
+        user: '{{ username }}'
+        key: "{{ lookup('file', '~/.ssh/theking.pub') }}"
+        state: present
+
+    - name: Disable Password Authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: "PasswordAuthentication no"
+        state: present
+        backup: yes
+      notify: restart ssh
+
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        state: present
+        pkg: "{{ packages }}"
+
+    - name: Set EDITOR to NVIM
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^export EDITOR='
+        line: 'export EDITOR=nvim'
+        state: present
+        backup: yes
+
+    - name: Check if Erlang is Installed
+      command: dpkg-query -W esl-erlang
+      register: erlang_check_deb
+      failed_when: erlang_check_deb.rc > 1
+      changed_when: erlang_check_deb.rc == 1
+
+    - name: Download erlang.deb
+      get_url:
+        url: "https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb"
+        dest: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
+      when: erlang_check_deb.rc == 1
+
+    - name: Install erlang dpk src
+      apt:
+        deb: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
+      when: erlang_check_deb.rc == 1
+
+    - name: Install erlang and elixir
+      apt:
+        update_cache: yes
+        state: present
+        pkg:
+          - esl-erlang
+          - elixir
+      when: erlang_check_deb.rc == 1
+
+    - name: Install Hex
+      command: mix local.hex --force
+
+    - name: Ensures shared/config dir exists
+      file:
+        path: "/home/{{ username }}/app_config"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
+    - name: Copy prod.secret.exs with owner and permissions
+      copy:
+        src: ../config/prod.secret.exs
+        dest: "/home/{{ username }}/app_config/prod.secret.exs"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
+  # use let's encrypt's staging and only at the end
+  handlers:
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted

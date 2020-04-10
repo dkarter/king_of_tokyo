@@ -18,7 +18,7 @@ const sshKey = new DigitalOcean.SshKey(sshKeyName, {
 const droplet = new DigitalOcean.Droplet(`${projectName}-web`, {
   size: DigitalOcean.DropletSlugs.DropletS1VCPU1GB,
   region: DigitalOcean.Regions.SFO2,
-  image: 'docker-18-04',
+  image: 'ubuntu-18-04-x64',
   monitoring: true,
   ipv6: true,
   sshKeys: [sshKey.fingerprint],
