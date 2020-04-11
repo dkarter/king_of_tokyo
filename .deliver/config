@@ -28,6 +28,7 @@ pre_erlang_clean_compile() {
   status "Build js"
   __sync_remote "
     set -e
+    . /home/$PRODUCTION_USER/.profile
     cd '$BUILD_AT'
     APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD build_js $SILENCE
   "

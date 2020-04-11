@@ -37,5 +37,3 @@ npm-debug.log
 
 # ignore dialyzer plts
 /priv/plts
-
-config/prod.secret.exs

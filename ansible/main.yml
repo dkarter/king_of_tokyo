@@ -1,5 +1,5 @@
 ---
-- hosts: web
+- hosts: application
   vars:
     - username: deploy
     - packages:
@@ -68,6 +68,14 @@
         dest: '/home/{{ username }}/.profile'
         regexp: '^export EDITOR='
         line: 'export EDITOR=nvim'
+        state: present
+        backup: yes
+
+    - name: Set KING_OF_TOKYO_SECRET_KEY_BASE
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^export KING_OF_TOKYO_SECRET_KEY_BASE='
+        line: "export KING_OF_TOKYO_SECRET_KEY_BASE='{{ king_of_tokyo_secret_key_base }}'"
         state: present
         backup: yes
 
