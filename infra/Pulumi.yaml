@@ -3,12 +3,9 @@ runtime: nodejs
 description: multiplayer game
 template:
     config:
-        digitalocean:token:
-          description: Your DigitalOcean personal access token.
-          secret: true
         sshKeyName:
-          description: Your SSH key name.
+          description: Your SSH key name. (e.g. theking)
         sshPubKeyFilename:
-          description: Your SSH public key filename
+          description: Full path to your SSH *public* key (e.g. /Users/username/.ssh/theking.pub)
         domainName:
-          description: Domain name for the server
+          description: Domain name for the server (e.g. theking.live)

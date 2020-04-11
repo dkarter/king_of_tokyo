@@ -1,6 +1,4 @@
 config:
-  digitalocean:token:
-    secure: AAABANopFiM51j9PAhRDuA9ioUIDICOhdT38zzcHhhW04Kyn2ZRr3bE5jutJJeoCAELrgYkET+MUo2z/C2Iaemoq7DeSUxFKnXZ0EXMZo9z/ZildBzeKyVW21+LySLwx
   king-of-tokyo:domainName: theking.live
   king-of-tokyo:sshKeyName: theking
   king-of-tokyo:sshPubKeyFilename: /Users/dorian/.ssh/theking.pub
