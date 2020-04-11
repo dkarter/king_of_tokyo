@@ -2,6 +2,12 @@
 
 ![Elixir CI](https://github.com/dkarter/king_of_tokyo/workflows/Elixir%20CI/badge.svg)
 
+A "King of Tokyo" Game Written in Elixir, Phoenix and Phoenix Live View.
+
+I created this app for playing one of my favorite board games in the age of social distancing. It is meant to be used in a multi person video chat app, such as Zoom.
+
+The person who owns the game needs to point a camera at the cards and share them with the rest of the group. Every player must then go to [https://theking.live](https://theking.live) and join the same room code.
+
 ## Running
 
 To start your Phoenix server:
