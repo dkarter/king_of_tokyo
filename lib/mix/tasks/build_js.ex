@@ -1,9 +1,10 @@
 defmodule Mix.Tasks.BuildJs do
-  use Mix.Task
-
-  @shortdoc """
+  @moduledoc """
   Compiles the frontend (via webpack) in production mode
   """
+  use Mix.Task
+
+  @shortdoc @moduledoc
 
   def run(_args) do
     Mix.shell().cmd("mkdir -p priv/static")
