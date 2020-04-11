@@ -1,15 +1,4 @@
 ---
-# - create deploy user (with messed up password)
-# - disable pass auth
-# - setup easy sudo
-# - install stuff
-#   - fail2ban
-#   - elixir (maybe)
-#   - erlang (maybe)
-#   - lets encrypt (there are galaxy roles for that)
-#     - setup auto-renew (might just be a flag in the 3rd party role)
-# - create
-#   - init.d (copy that file)
 - hosts: web
   vars:
     - username: deploy
@@ -19,6 +8,19 @@
       - nodejs
       - neovim
       - nginx
+    - certbot_auto_renew: true
+    - certbot_auto_renew_user: "root"
+    - certbot_auto_renew_hour: "3"
+    - certbot_auto_renew_minute: "30"
+    - certbot_auto_renew_options: "--quiet --no-self-upgrade"
+    - certbot_create_if_missing: true
+    - certbot_admin_email: aacee143-216e-43f6-87d3-4fd14fa9c07f@anonaddy.me
+    - certbot_create_method: standalone
+    - certbot_create_standalone_stop_services:
+      - nginx
+    - certbot_certs:
+      - domains:
+          - theking.live
 
   gather_facts: no
   remote_user: root
@@ -166,8 +168,9 @@
       changed_when: >
         "Will always run, don't show that it changed" == 1
 
+  roles:
+    - geerlingguy.certbot
 
-  # use let's encrypt's staging and only at the end
   handlers:
     - name: restart ssh
       service:
