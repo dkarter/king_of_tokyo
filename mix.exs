@@ -6,7 +6,7 @@ defmodule KingOfTokyo.MixProject do
       app: :king_of_tokyo,
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       deps: deps(),
-      dialyzer: dialyzer(Mix.env()),
+      dialyzer: dialyzer(),
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
@@ -54,15 +54,14 @@ defmodule KingOfTokyo.MixProject do
     ]
   end
 
-  defp dialyzer(:test) do
+  defp dialyzer do
     [
       plt_core_path: "priv/plts",
       plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-      ignore_warnings: ".dialyzer_ignore.exs"
+      ignore_warnings: ".dialyzer_ignore.exs",
+      plt_add_apps: [:mix]
     ]
   end
-
-  defp dialyzer(_), do: []
 
   defp releases do
     [

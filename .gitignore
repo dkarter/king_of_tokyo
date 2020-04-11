@@ -35,4 +35,7 @@ npm-debug.log
 /priv/static/
 .deliver/releases/
 
+# ignore dialyzer plts
+/priv/plts
+
 config/prod.secret.exs
