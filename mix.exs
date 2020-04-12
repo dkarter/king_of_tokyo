@@ -3,6 +3,7 @@ defmodule KingOfTokyo.MixProject do
 
   def project do
     [
+      aliases: aliases(),
       app: :king_of_tokyo,
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       deps: deps(),
@@ -70,5 +71,22 @@ defmodule KingOfTokyo.MixProject do
         applications: [runtime_tools: :permanent]
       ]
     ]
+  end
+
+  defp aliases do
+    [
+      ansible: &run_ansible/1,
+      pulumi: &run_pulumi/1
+    ]
+  end
+
+  defp run_ansible(_) do
+    Mix.shell().cmd(
+      "cd ansible/ && ANSIBLE_FORCE_COLOR=True ansible-playbook main.yml --vault-password-file .vault-password"
+    )
+  end
+
+  defp run_pulumi(args) do
+    Mix.shell().cmd("cd infra/ && pulumi --color always #{Enum.join(args, " ")}")
   end
 end

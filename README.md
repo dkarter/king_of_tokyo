@@ -21,37 +21,46 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Deployment
 
 1. Set up a [DigitalOcean](https://m.do.co/c/8cd5d34769f8) account
+
 2. Get an API token from the API section on the sidebar and export an API token like so:
 
 ```bash
 export DIGITALOCEAN_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-3. Create an ssh key for the project for the project like so:
+3. Create an ssh key for the project for the project:
 
 ```bash
-ssh-keygen
+ssh-keygen -f ~/.ssh/theking
 ```
 
-4. Run pulumi to create a droplet, domain and firewall:
+4. Install Pulumi dependencies:
 
 ```bash
-pushd infra/ && yarn && pulumi up ; popd
+yarn --cwd infra
 ```
 
-5. Run ansible to provision the droplet:
+5. Run Pulumi to associate your ssh key, create a droplet, domain and firewall:
 
 ```bash
-pushd ansible/ && ansible-playbook main.yml ; popd
+mix pulumi up
 ```
 
-6. Build the release using edeliver:
+6. Store the Ansible Vault password in `ansible/.vault-password`
+
+7. Run Ansible to provision the droplet:
+
+```bash
+mix ansible
+```
+
+8. Build the release using edeliver:
 
 ```bash
 mix edeliver build release
 ```
 
-7. Deploy using edeliver:
+9. Deploy using edeliver:
 
 ```bash
 mix edeliver deploy release to production
