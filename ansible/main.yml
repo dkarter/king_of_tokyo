@@ -79,6 +79,14 @@
         state: present
         backup: yes
 
+    - name: Set KING_OF_TOKYO_ERLANG_COOKIE
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^export KING_OF_TOKYO_ERLANG_COOKIE='
+        line: "export KING_OF_TOKYO_ERLANG_COOKIE='{{ king_of_tokyo_erlang_cookie }}'"
+        state: present
+        backup: yes
+
     - name: Add Yarn repo key
       apt_key:
         url: https://dl.yarnpkg.com/debian/pubkey.gpg

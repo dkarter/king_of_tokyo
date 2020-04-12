@@ -34,9 +34,18 @@ environment :dev do
 end
 
 environment :prod do
+  prod_cookie = fn ->
+    cookie = System.get_env("KING_OF_TOKYO_ERLANG_COOKIE") || :crypto.strong_rand_bytes(64)
+
+    :sha256
+    |> :crypto.hash(cookie)
+    |> Base.encode16()
+    |> String.to_atom()
+  end
+
   set(include_erts: true)
   set(include_src: false)
-  set(cookie: :"$cdp}4pPR|Wy7.B>w7{}zQZc$]pH?sXCPM;[WLJa)>d@;n_}G6]7$YP6Fyhw1XoB")
+  set(cookie: prod_cookie.())
   set(vm_args: "rel/vm.args")
 end
 
