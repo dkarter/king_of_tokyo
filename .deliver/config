@@ -1,0 +1,52 @@
+# vim: ft=sh
+
+APP="king_of_tokyo"
+
+BUILD_HOST="theking.live"
+BUILD_USER="deploy"
+BUILD_AT="/home/deploy/app_build"
+
+PRODUCTION_HOSTS="theking.live"
+PRODUCTION_USER="deploy"
+DELIVER_TO="/home/deploy/app_release"
+
+GIT_CLEAN_PATHS="priv/static"
+
+pre_erlang_get_and_update_deps() {
+  local _prod_secret_path="/home/$BUILD_USER/app_config/prod.secret.exs"
+
+  if [ "$TARGET_MIX_ENV" = "prod" ]; then
+    __sync_remote "
+      ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
+    "
+  fi
+}
+
+# =-====================================================
+
+pre_erlang_clean_compile() {
+  status "Build js"
+  __sync_remote "
+    set -e
+    . /home/$PRODUCTION_USER/.profile
+    cd '$BUILD_AT'
+    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD build_js $SILENCE
+  "
+}
+
+post_extract_release_archive() {
+  symlink_static
+}
+
+post_upgrade_release() {
+  symlink_static
+}
+
+symlink_static(){
+  status "Symlinking statics"
+  __sync_remote "
+    set -e
+    cp -r $BUILD_AT/priv/static $DELIVER_TO/$APP/releases/$VERSION/static
+    ln -sfn $DELIVER_TO/$APP/releases/$VERSION/static $DELIVER_TO
+  "
+}

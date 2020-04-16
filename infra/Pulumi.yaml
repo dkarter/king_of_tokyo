@@ -1,0 +1,11 @@
+name: king-of-tokyo
+runtime: nodejs
+description: multiplayer game
+template:
+    config:
+        sshKeyName:
+          description: Your SSH key name. (e.g. theking)
+        sshPubKeyFilename:
+          description: Full path to your SSH *public* key (e.g. /Users/username/.ssh/theking.pub)
+        domainName:
+          description: Domain name for the server (e.g. theking.live)

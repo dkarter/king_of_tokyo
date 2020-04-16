@@ -1,0 +1,4 @@
+config:
+  king-of-tokyo:domainName: theking.live
+  king-of-tokyo:sshKeyName: theking
+  king-of-tokyo:sshPubKeyFilename: /Users/dorian/.ssh/theking.pub

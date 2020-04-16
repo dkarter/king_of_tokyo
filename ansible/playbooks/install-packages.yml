@@ -1,0 +1,73 @@
+---
+- hosts: application
+  vars:
+    - packages:
+      # for security
+      - fail2ban
+      # for edeliver
+      - git
+      # for compiling assets
+      - nodejs
+      # for editing/viewing files on remote
+      - neovim
+      # for reverse proxy and easy let's encrypt setup
+      - nginx
+
+  gather_facts: no
+  remote_user: root
+
+  tasks:
+    - name: Update APT package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        state: present
+        pkg: "{{ packages }}"
+
+    - name: Add Yarn repo key
+      apt_key:
+        url: https://dl.yarnpkg.com/debian/pubkey.gpg
+        state: present
+
+    - name: Add Yarn repo
+      apt_repository:
+        repo: 'deb https://dl.yarnpkg.com/debian/ stable main'
+        state: present
+
+    - name: Install Yarn
+      apt:
+        update_cache: yes
+        state: present
+        pkg: yarn
+
+    - name: Check if Erlang is Installed
+      command: dpkg-query -W esl-erlang
+      register: erlang_check_deb
+      failed_when: erlang_check_deb.rc > 1
+      changed_when: erlang_check_deb.rc == 1
+
+    - name: Download erlang.deb
+      get_url:
+        url: "https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb"
+        dest: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
+      when: erlang_check_deb.rc == 1
+
+    - name: Install erlang dpk src
+      apt:
+        deb: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
+      when: erlang_check_deb.rc == 1
+
+    - name: Install erlang and elixir
+      apt:
+        update_cache: yes
+        state: present
+        pkg:
+          - esl-erlang
+          - elixir
+      when: erlang_check_deb.rc == 1
+
+    - name: Install Hex
+      command: mix local.hex --force

@@ -1,0 +1,10 @@
+{
+    "name": "king_of_tokyo",
+    "devDependencies": {
+        "@types/node": "^8.0.0"
+    },
+    "dependencies": {
+        "@pulumi/digitalocean": "^1.8.0",
+        "@pulumi/pulumi": "^1.0.0"
+    }
+}

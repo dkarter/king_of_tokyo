@@ -3,15 +3,17 @@ defmodule KingOfTokyo.MixProject do
 
   def project do
     [
+      aliases: aliases(),
       app: :king_of_tokyo,
-      version: "0.1.0",
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      deps: deps(),
+      dialyzer: dialyzer(),
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      releases: releases(),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      dialyzer: dialyzer(Mix.env()),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      version: "0.1.0"
     ]
   end
 
@@ -47,17 +49,44 @@ defmodule KingOfTokyo.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.10"},
       {:phoenix_pubsub, "~> 1.1"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:edeliver, "~> 1.8.0"},
+      {:distillery, "~> 2.1.1"}
     ]
   end
 
-  defp dialyzer(:test) do
+  defp dialyzer do
     [
       plt_core_path: "priv/plts",
       plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-      ignore_warnings: ".dialyzer_ignore.exs"
+      ignore_warnings: ".dialyzer_ignore.exs",
+      plt_add_apps: [:mix]
     ]
   end
 
-  defp dialyzer(_), do: []
+  defp releases do
+    [
+      king_of_tokyo: [
+        include_executables_for: [:unix],
+        applications: [runtime_tools: :permanent]
+      ]
+    ]
+  end
+
+  defp aliases do
+    [
+      ansible: &run_ansible/1,
+      pulumi: &run_pulumi/1
+    ]
+  end
+
+  defp run_ansible(_) do
+    Mix.shell().cmd(
+      "cd ansible/ && ANSIBLE_FORCE_COLOR=True ansible-playbook main.yml --vault-password-file .vault-password"
+    )
+  end
+
+  defp run_pulumi(args) do
+    Mix.shell().cmd("cd infra/ && pulumi --color always #{Enum.join(args, " ")}")
+  end
 end

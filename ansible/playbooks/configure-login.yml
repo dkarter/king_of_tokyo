@@ -1,0 +1,39 @@
+---
+- hosts: application
+
+  remote_user: root
+  gather_facts: no
+
+  tasks:
+    - name: Create Deploy User
+      user:
+        name: '{{ username }}'
+        createhome: yes
+        state: present
+        shell: /bin/bash
+      register: deployuser
+
+    - name: Disable password for deploy on creation
+      shell: /usr/bin/passwd -l '{{ username }}'
+      when: deployuser.changed
+
+    - name: Deploy SSH Key
+      authorized_key:
+        user: '{{ username }}'
+        key: "{{ lookup('file', '~/.ssh/theking.pub') }}"
+        state: present
+
+    - name: Disable Password Authentication
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: "PasswordAuthentication no"
+        state: present
+        backup: yes
+      notify: restart ssh
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted
