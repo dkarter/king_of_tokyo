@@ -2,10 +2,15 @@
 - hosts: application
   vars:
     - packages:
+      # for security
       - fail2ban
+      # for edeliver
       - git
+      # for compiling assets
       - nodejs
+      # for editing/viewing files on remote
       - neovim
+      # for reverse proxy and easy let's encrypt setup
       - nginx
 
   gather_facts: no
@@ -66,4 +71,3 @@
 
     - name: Install Hex
       command: mix local.hex --force
-
