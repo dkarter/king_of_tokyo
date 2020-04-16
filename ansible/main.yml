@@ -1,194 +1,23 @@
 ---
 - hosts: application
-  vars:
-    - username: deploy
-    - packages:
-      - fail2ban
-      - git
-      - nodejs
-      - neovim
-      - nginx
-    - certbot_auto_renew: true
-    - certbot_auto_renew_user: "root"
-    - certbot_auto_renew_hour: "3"
-    - certbot_auto_renew_minute: "30"
-    - certbot_auto_renew_options: "--quiet --no-self-upgrade"
-    - certbot_create_if_missing: true
-    - certbot_admin_email: aacee143-216e-43f6-87d3-4fd14fa9c07f@anonaddy.me
-    - certbot_create_method: standalone
-    - certbot_create_standalone_stop_services:
-      - nginx
-    - certbot_certs:
-      - domains:
-          - theking.live
 
   gather_facts: no
   remote_user: root
 
-  tasks:
-    - name: Create Deploy User
-      user:
-        name: '{{ username }}'
-        createhome: yes
-        state: present
-        shell: /bin/bash
-      register: deployuser
+- name: Configure Machine Login
+  import_playbook: playbooks/configure-login.yml
 
-    - name: Disable password for deploy on creation
-      shell: /usr/bin/passwd -l '{{ username }}'
-      when: deployuser.changed
+- name: Install Packages
+  import_playbook: playbooks/install-packages.yml
 
-    - name: Deploy SSH Key
-      authorized_key:
-        user: '{{ username }}'
-        key: "{{ lookup('file', '~/.ssh/theking.pub') }}"
-        state: present
+- name: Set Environment Variables
+  import_playbook: playbooks/set-environment-variables.yml
 
-    - name: Disable Password Authentication
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication'
-        line: "PasswordAuthentication no"
-        state: present
-        backup: yes
-      notify: restart ssh
+- name: Setup Nginx
+  import_playbook: playbooks/nginx.yml
 
-    - name: Update APT package cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
+- name: Application Deployment Setup
+  import_playbook: playbooks/application-deployment-setup.yml
 
-    - name: Install required packages
-      apt:
-        state: present
-        pkg: "{{ packages }}"
-
-    - name: Set EDITOR to NVIM
-      lineinfile:
-        dest: '/home/{{ username }}/.profile'
-        regexp: '^export EDITOR='
-        line: 'export EDITOR=nvim'
-        state: present
-        backup: yes
-
-    - name: Set KING_OF_TOKYO_SECRET_KEY_BASE
-      lineinfile:
-        dest: '/home/{{ username }}/.profile'
-        regexp: '^export KING_OF_TOKYO_SECRET_KEY_BASE='
-        line: "export KING_OF_TOKYO_SECRET_KEY_BASE='{{ king_of_tokyo_secret_key_base }}'"
-        state: present
-        backup: yes
-
-    - name: Set KING_OF_TOKYO_ERLANG_COOKIE
-      lineinfile:
-        dest: '/home/{{ username }}/.profile'
-        regexp: '^export KING_OF_TOKYO_ERLANG_COOKIE='
-        line: "export KING_OF_TOKYO_ERLANG_COOKIE='{{ king_of_tokyo_erlang_cookie }}'"
-        state: present
-        backup: yes
-
-    - name: Add Yarn repo key
-      apt_key:
-        url: https://dl.yarnpkg.com/debian/pubkey.gpg
-        state: present
-
-    - name: Add Yarn repo
-      apt_repository:
-        repo: 'deb https://dl.yarnpkg.com/debian/ stable main'
-        state: present
-
-    - name: Install Yarn
-      apt:
-        update_cache: yes
-        state: present
-        pkg: yarn
-
-    - name: Check if Erlang is Installed
-      command: dpkg-query -W esl-erlang
-      register: erlang_check_deb
-      failed_when: erlang_check_deb.rc > 1
-      changed_when: erlang_check_deb.rc == 1
-
-    - name: Download erlang.deb
-      get_url:
-        url: "https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb"
-        dest: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
-      when: erlang_check_deb.rc == 1
-
-    - name: Install erlang dpk src
-      apt:
-        deb: "/home/{{ username }}/erlang-solutions_1.0_all.deb"
-      when: erlang_check_deb.rc == 1
-
-    - name: Install erlang and elixir
-      apt:
-        update_cache: yes
-        state: present
-        pkg:
-          - esl-erlang
-          - elixir
-      when: erlang_check_deb.rc == 1
-
-    - name: Install Hex
-      command: mix local.hex --force
-
-    - name: Ensures shared/config dir exists
-      file:
-        path: "/home/{{ username }}/app_config"
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-
-    - name: Copy prod.secret.exs with owner and permissions
-      copy:
-        src: ../config/prod.secret.exs
-        dest: "/home/{{ username }}/app_config/prod.secret.exs"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-
-    - name: Remove the default nginx app's config
-      file:
-        path: /etc/nginx/sites-available/default
-        state: absent
-
-    - name: Remove the default nginx app's symlink if it exists
-      file:
-        path: /etc/nginx/sites-enabled/default
-        state: absent
-
-    - name: Copy nginx.conf
-      template:
-        src: nginx.conf
-        dest: /etc/nginx/nginx.conf
-
-    - name: Configure nginx for the app
-      template:
-        src: "theking.nginx"
-        dest: "/etc/nginx/sites-available/theking"
-        group: "{{ username }}"
-        owner: "{{ username }}"
-        force: yes
-
-    - name: Enable the app
-      file:
-        src: "/etc/nginx/sites-available/theking"
-        dest: "/etc/nginx/sites-enabled/theking"
-        state: link
-        owner: "{{ username }}"
-        group: "{{ username }}"
-
-    - name: Restart nginx
-      service:
-        name: nginx
-        state: restarted
-      changed_when: >
-        "Will always run, don't show that it changed" == 1
-
-  roles:
-    - geerlingguy.certbot
-
-  handlers:
-    - name: restart ssh
-      service:
-        name: sshd
-        state: restarted
+- name: Let's Encrypt SSL Setup
+  import_playbook: playbooks/lets-encrypt.yml
