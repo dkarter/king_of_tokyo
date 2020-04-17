@@ -10,7 +10,7 @@ defmodule KingOfTokyo.Player do
     counters: %{mimic: 0, poison: 0, shrink: 0, smoke: 0},
     health: 10,
     points: 0,
-    lightning: 0
+    energy: 0
   ]
 
   @characters %{
@@ -47,7 +47,7 @@ defmodule KingOfTokyo.Player do
           },
           health: integer(),
           id: String.t(),
-          lightning: non_neg_integer(),
+          energy: non_neg_integer(),
           name: String.t(),
           points: integer()
         }
@@ -91,17 +91,17 @@ defmodule KingOfTokyo.Player do
     Map.put(player, :health, health)
   end
 
-  @spec set_lightning(t(), String.t() | integer()) :: t()
-  def set_lightning(%__MODULE__{} = player, lightning) when is_binary(lightning) do
-    set_lightning(player, String.to_integer(lightning))
+  @spec set_energy(t(), String.t() | integer()) :: t()
+  def set_energy(%__MODULE__{} = player, energy) when is_binary(energy) do
+    set_energy(player, String.to_integer(energy))
   end
 
-  def set_lightning(%__MODULE__{} = player, lightning) when lightning < 0 do
-    set_lightning(player, 0)
+  def set_energy(%__MODULE__{} = player, energy) when energy < 0 do
+    set_energy(player, 0)
   end
 
-  def set_lightning(%__MODULE__{} = player, lightning) do
-    Map.put(player, :lightning, lightning)
+  def set_energy(%__MODULE__{} = player, energy) do
+    Map.put(player, :energy, energy)
   end
 
   @spec set_points(t(), String.t() | integer()) :: t()

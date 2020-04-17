@@ -67,17 +67,17 @@ defmodule KingOfTokyo.PlayerTest do
     end
   end
 
-  describe ".set_lightning/2" do
-    test "sets a player's lightning" do
-      assert %{lightning: 12} = Player.set_lightning(%Player{}, 12)
+  describe ".set_energy/2" do
+    test "sets a player's energy" do
+      assert %{energy: 12} = Player.set_energy(%Player{}, 12)
     end
 
     test "accepts string and turns it into integer" do
-      assert %{lightning: 12} = Player.set_lightning(%Player{}, "12")
+      assert %{energy: 12} = Player.set_energy(%Player{}, "12")
     end
 
     test "cannot be less than 0" do
-      assert %{lightning: 0} = Player.set_lightning(%Player{}, -1)
+      assert %{energy: 0} = Player.set_energy(%Player{}, -1)
     end
   end
 

@@ -8,7 +8,7 @@ defmodule KingOfTokyo.Dice do
     1 => %{name: "one"},
     2 => %{name: "two"},
     3 => %{name: "three"},
-    4 => %{name: "lightning"},
+    4 => %{name: "energy"},
     5 => %{name: "claw"},
     6 => %{name: "heart"}
   }

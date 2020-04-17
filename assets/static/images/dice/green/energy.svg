@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="128px" height="128px" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
-    <title>Lightning</title>
+    <title>energy</title>
     <desc>Created with Sketch.</desc>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Black" transform="translate(-284.000000, -29.000000)">
-            <g id="Lightning" transform="translate(284.000000, 29.000000)">
-                <rect id="Rectangle" fill="#2A2E25" x="0" y="0" width="128" height="128" rx="8"></rect>
-                <g id="np_lightning_852064_5BC67F" transform="translate(36.000000, 23.000000)" fill="#5BC67F" fill-rule="nonzero">
+        <g id="Green" transform="translate(-284.000000, -29.000000)">
+            <g id="energy" transform="translate(284.000000, 29.000000)">
+                <rect id="Rectangle" fill="#5BC67F" x="0" y="0" width="128" height="128" rx="8"></rect>
+                <g id="np_energy_852064_5BC67F" transform="translate(36.000000, 23.000000)" fill="#2A2E25" fill-rule="nonzero">
                     <path d="M58.9654944,7.97999491 C58.7742993,7.40585867 58.29444,6.92861436 57.7170926,6.73849544 L30.0800791,0.0576095933 C29.3115557,-0.132528418 28.542994,0.154539703 28.1606421,0.821883846 L0.710773738,45.2955865 C0.230914491,46.1530687 0.42210961,47.2044111 1.288102,47.7785855 C1.47929711,47.8755156 1.67049223,47.9687235 1.86543025,47.9687235 L18.9455403,52.0734597 L0.231029658,83.2817864 C-0.24882959,84.1392685 0.0398345391,85.2875792 0.902084023,85.7647853 C1.57313839,86.1450613 2.43916916,86.0518534 3.01269694,85.5746473 L46.5819971,44.2476419 C47.1593254,43.6735056 47.2530515,42.9129918 46.9643874,42.241849 C46.6757232,41.5745049 45.9071615,41.0973179 45.1424578,41.1904685 L31.4213625,42.148603 L58.5823556,9.60123594 C58.9647458,9.22095992 59.0622148,8.54985539 58.9647458,7.97949862 L58.9654944,7.97999491 Z" id="Path"></path>
                 </g>
             </g>

@@ -8,14 +8,14 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
   alias KingOfTokyo.Player
 
   def handle_event("update-player", fields, socket) do
-    %{"name" => name, "health" => health, "points" => points, "lightning" => lightning} = fields
+    %{"name" => name, "health" => health, "points" => points, "energy" => energy} = fields
 
     player =
       socket.assigns.player
       |> Player.set_name(name)
       |> Player.set_health(health)
       |> Player.set_points(points)
-      |> Player.set_lightning(lightning)
+      |> Player.set_energy(energy)
 
     send(self(), {:update_player, player})
 
@@ -31,7 +31,7 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
         <div>Name: <input name="name" type="text" value="<%= @player.name %>" /></div>
         <div>❤️: <input name="health" type="number" min="0" max="12" value="<%= @player.health %>" /></div>
         <div>⭐️: <input name="points" type="number" min="0" max="20" value="<%= @player.points %>" /></div>
-        <div>⚡️: <input name="lightning" type="number" min="0" value="<%= @player.lightning %>" /></div>
+        <div>⚡️: <input name="energy" type="number" min="0" value="<%= @player.energy %>" /></div>
       </form>
     </div>
     """

@@ -16,7 +16,7 @@ defmodule KingOfTokyoWeb.PlayerListComponent do
           <div>Character: <%= Player.character_name(player) %></div>
           <div>❤️: <%= player.health %></div>
           <div>⭐️: <%= player.points %></div>
-          <div>⚡️: <%= player.lightning %></div>
+          <div>⚡️: <%= player.energy %></div>
         </div>
       <% end %>
     </aside>
