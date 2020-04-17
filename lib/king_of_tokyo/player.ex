@@ -3,7 +3,15 @@ defmodule KingOfTokyo.Player do
   Represents a player in king of tokyo
   """
 
-  defstruct [:id, :name, :character, :health, :points]
+  defstruct [
+    :character,
+    :id,
+    :name,
+    counters: %{mimic: 0, poison: 0, shrink: 0, smoke: 0},
+    health: 10,
+    points: 0,
+    lightning: 0
+  ]
 
   @characters %{
     the_king: "The King",
@@ -30,10 +38,17 @@ defmodule KingOfTokyo.Player do
           | :alienoid
 
   @type t :: %__MODULE__{
-          id: String.t(),
-          name: String.t(),
           character: character_type(),
+          counters: %{
+            mimic: non_neg_integer(),
+            poison: non_neg_integer(),
+            shrink: non_neg_integer(),
+            smoke: non_neg_integer()
+          },
           health: integer(),
+          id: String.t(),
+          lightning: non_neg_integer(),
+          name: String.t(),
           points: integer()
         }
 
@@ -42,9 +57,7 @@ defmodule KingOfTokyo.Player do
     params = %{
       id: Ecto.UUID.generate(),
       name: name,
-      character: character,
-      health: 10,
-      points: 0
+      character: character
     }
 
     struct!(__MODULE__, params)
@@ -76,6 +89,19 @@ defmodule KingOfTokyo.Player do
 
   def set_health(%__MODULE__{} = player, health) do
     Map.put(player, :health, health)
+  end
+
+  @spec set_lightning(t(), String.t() | integer()) :: t()
+  def set_lightning(%__MODULE__{} = player, lightning) when is_binary(lightning) do
+    set_lightning(player, String.to_integer(lightning))
+  end
+
+  def set_lightning(%__MODULE__{} = player, lightning) when lightning < 0 do
+    set_lightning(player, 0)
+  end
+
+  def set_lightning(%__MODULE__{} = player, lightning) do
+    Map.put(player, :lightning, lightning)
   end
 
   @spec set_points(t(), String.t() | integer()) :: t()

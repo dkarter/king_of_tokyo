@@ -64,10 +64,14 @@ main.container {
   }
 }
 
-.player-card form {
-  display: flex;
-  justify-content: space-between;
-  min-width: 65rem;
+.player-card {
+  form {
+    min-width: 65rem;
+  }
+
+  input[type='number'] {
+    max-width: 5rem;
+  }
 }
 
 .dice-roll {
