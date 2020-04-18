@@ -4,9 +4,19 @@
 
 @import '../../deps/phoenix_live_view/assets/css/live_view.css';
 
-.button.danger {
+.button-danger {
   background-color: #a94442;
-  border: none;
+  border-color: #a94442;
+}
+
+.button-danger.button-clear,
+.button-danger.button-outline {
+  background-color: transparent;
+  color: #a94442;
+}
+
+.button-danger.button-clear {
+  border-color: transparent;
 }
 
 .logo img {

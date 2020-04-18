@@ -72,7 +72,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
     disabled = if has_results, do: "", else: "disabled"
 
     ~L"""
-    <button type="reset" class="button danger" <%= disabled %> phx-click="reset" phx-target="#<%= @id %>">Reset</button>
+    <button type="reset" class="button button-danger" <%= disabled %> phx-click="reset" phx-target="#<%= @id %>">Reset</button>
     """
   end
 

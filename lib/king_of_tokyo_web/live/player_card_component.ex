@@ -31,7 +31,14 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
   def render(assigns) do
     form_id = "player-card-form-#{assigns.id}"
 
-    tokyo_button_text = if assigns.in_tokyo, do: "Leave Tokyo", else: "Enter Tokyo"
+    IO.inspect(assigns)
+
+    tokyo_button_text =
+      if assigns.in_tokyo do
+        "Leave Tokyo"
+      else
+        "Enter Tokyo"
+      end
 
     ~L"""
     <div class="player-card">
@@ -43,7 +50,7 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
           <div class="column">❤️  <input name="health" type="number" min="0" max="12" value="<%= @player.health %>" /></div>
           <div class="column">⭐️ <input name="points" type="number" min="0" max="20" value="<%= @player.points %>" /></div>
           <div class="column">⚡️ <input name="energy" type="number" min="0" value="<%= @player.energy %>" /></div>
-          <div class="column"><button type="button" phx-click="toggle-tokyo" phx-target="#<%= form_id %>"><%= tokyo_button_text %></button></div>
+          <div class="column"><button type="button" class="button button-outline<%= if @in_tokyo, do: " button-danger" %>" phx-click="toggle-tokyo" phx-target="#<%= form_id %>"><%= tokyo_button_text %></button></div>
         </div>
       </form>
     </div>
