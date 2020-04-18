@@ -66,8 +66,8 @@ defmodule KingOfTokyo.GameServerTest do
   describe ".remove_player/2" do
     test "removes a player from the game instance" do
       game_id = Ecto.UUID.generate()
-      player = Player.new("Joe", :the_king)
       {:ok, _pid} = GameServer.start_link(game_id)
+      player = Player.new("Joe", :the_king)
       :ok = GameServer.add_player(game_id, player)
       assert :ok = GameServer.remove_player(game_id, player.id)
       assert {:ok, []} = GameServer.list_players(game_id)
@@ -144,6 +144,35 @@ defmodule KingOfTokyo.GameServerTest do
       {:ok, _pid} = GameServer.start_link(game_id)
 
       assert {:ok, %{dice_count: 5}} = GameServer.set_dice_count(game_id, 5)
+    end
+  end
+
+  describe ".enter_tokyo/2" do
+    test "puts the player in tokyo" do
+      game_id = Ecto.UUID.generate()
+      {:ok, _pid} = GameServer.start_link(game_id)
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert :ok = GameServer.enter_tokyo(game_id, player_id)
+
+      assert {:ok, %{tokyo_city_player_id: ^player_id, tokyo_bay_player_id: nil}} =
+               GameServer.get_tokyo_state(game_id)
+    end
+  end
+
+  describe ".leave_tokyo/2" do
+    test "removes the player from tokyo" do
+      game_id = Ecto.UUID.generate()
+      {:ok, _pid} = GameServer.start_link(game_id)
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert :ok = GameServer.enter_tokyo(game_id, player_id)
+      assert :ok = GameServer.leave_tokyo(game_id, player_id)
+
+      assert {:ok, %{tokyo_city_player_id: nil, tokyo_bay_player_id: nil}} =
+               GameServer.get_tokyo_state(game_id)
     end
   end
 end

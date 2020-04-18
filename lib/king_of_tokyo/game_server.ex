@@ -34,6 +34,22 @@ defmodule KingOfTokyo.GameServer do
     call_by_name(game_name, :list_players)
   end
 
+  def enter_tokyo(game_name, player_id) do
+    with {:ok, tokyo_state} <- call_by_name(game_name, {:enter_tokyo, player_id}) do
+      broadcast_tokyo_updated!(game_name, tokyo_state)
+    end
+  end
+
+  def leave_tokyo(game_name, player_id) do
+    with {:ok, tokyo_state} <- call_by_name(game_name, {:leave_tokyo, player_id}) do
+      broadcast_tokyo_updated!(game_name, tokyo_state)
+    end
+  end
+
+  def get_tokyo_state(game_name) do
+    call_by_name(game_name, :get_tokyo_state)
+  end
+
   def get_dice_state(game_name) do
     call_by_name(game_name, :get_dice_state)
   end
@@ -140,6 +156,26 @@ defmodule KingOfTokyo.GameServer do
   end
 
   @impl GenServer
+  def handle_call({:enter_tokyo, player_id}, _from, state) do
+    game = Game.enter_tokyo(state.game, player_id)
+    tokyo_state = Map.take(game, [:tokyo_city_player_id, :tokyo_bay_player_id])
+    {:reply, {:ok, tokyo_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call({:leave_tokyo, player_id}, _from, state) do
+    game = Game.leave_tokyo(state.game, player_id)
+    tokyo_state = Map.take(game, [:tokyo_city_player_id, :tokyo_bay_player_id])
+    {:reply, {:ok, tokyo_state}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call(:get_tokyo_state, _from, state) do
+    tokyo_state = Map.take(state.game, [:tokyo_city_player_id, :tokyo_bay_player_id])
+    {:reply, {:ok, tokyo_state}, state}
+  end
+
+  @impl GenServer
   def handle_call(:get_dice_state, _from, state) do
     {:reply, {:ok, state.game.dice_state}, state}
   end
@@ -210,5 +246,9 @@ defmodule KingOfTokyo.GameServer do
 
   defp broadcast_players_updated!(game_name) do
     KingOfTokyoWeb.Endpoint.broadcast!(game_name, "players_updated", %{})
+  end
+
+  defp broadcast_tokyo_updated!(game_name, tokyo_state) do
+    KingOfTokyoWeb.Endpoint.broadcast!(game_name, "tokyo_updated", tokyo_state)
   end
 end

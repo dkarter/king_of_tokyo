@@ -14,6 +14,14 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
 
+  def handle_info(%{event: "tokyo_updated", payload: tokyo_state}, socket) do
+    {:noreply,
+     assign(socket,
+       tokyo_city_player_id: tokyo_state.tokyo_city_player_id,
+       tokyo_bay_player_id: tokyo_state.tokyo_bay_player_id
+     )}
+  end
+
   def handle_info(%{event: "dice_updated", payload: dice_state}, socket) do
     {:noreply, assign(socket, dice_state: dice_state)}
   end
@@ -42,6 +50,20 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
 
   def handle_info({:put_temporary_flash, level, message}, socket) do
     {:noreply, put_temporary_flash(socket, level, message)}
+  end
+
+  def handle_info(:toggle_tokyo, socket) do
+    topic = GameCode.to_topic(socket.assigns.code)
+
+    player = socket.assigns.player
+
+    if in_tokyo?(player.id, socket.assigns) do
+      :ok = GameServer.leave_tokyo(topic, player.id)
+    else
+      :ok = GameServer.enter_tokyo(topic, player.id)
+    end
+
+    {:noreply, socket}
   end
 
   def handle_info({:clear_flash, level}, socket) do
@@ -150,10 +172,10 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
       ~L"""
       <div class="game-container">
         <div class="main-panel">
-          <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player) %>
+          <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player, in_tokyo: in_tokyo?(@player, assigns)) %>
           <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @dice_state) %>
         </div>
-        <%= live_component(@socket, PlayerListComponent, players: @players) %>
+        <%= live_component(@socket, PlayerListComponent, players: @players, tokyo_city_player_id: @tokyo_city_player_id, tokyo_bay_player_id: @tokyo_bay_player_id) %>
       </div>
       """
     else
@@ -187,5 +209,9 @@ defmodule KingOfTokyoWeb.KingOfTokyoLive do
     :timer.send_after(:timer.seconds(3), {:clear_flash, level})
 
     put_flash(socket, level, message)
+  end
+
+  defp in_tokyo?(player_id, assigns) do
+    assigns.tokyo_city_player_id == player_id || assigns.tokyo_bay_player_id == player_id
   end
 end
