@@ -75,6 +75,8 @@ defmodule KingOfTokyo.Player do
   end
 
   @spec set_health(t(), String.t() | integer()) :: t()
+  def set_health(%__MODULE__{} = player, ""), do: player
+
   def set_health(%__MODULE__{} = player, health) when is_binary(health) do
     set_health(player, String.to_integer(health))
   end
@@ -92,6 +94,8 @@ defmodule KingOfTokyo.Player do
   end
 
   @spec set_energy(t(), String.t() | integer()) :: t()
+  def set_energy(%__MODULE__{} = player, ""), do: player
+
   def set_energy(%__MODULE__{} = player, energy) when is_binary(energy) do
     set_energy(player, String.to_integer(energy))
   end
@@ -105,6 +109,8 @@ defmodule KingOfTokyo.Player do
   end
 
   @spec set_points(t(), String.t() | integer()) :: t()
+  def set_points(%__MODULE__{} = player, ""), do: player
+
   def set_points(%__MODULE__{} = player, points) when is_binary(points) do
     set_points(player, String.to_integer(points))
   end

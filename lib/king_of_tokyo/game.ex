@@ -44,6 +44,14 @@ defmodule KingOfTokyo.Game do
     end
   end
 
+  @spec get_player_by_id(t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
+  def get_player_by_id(game, player_id) do
+    case find_player(game, %{id: player_id}) do
+      %Player{} = player -> {:ok, player}
+      nil -> {:error, :player_not_found}
+    end
+  end
+
   @doc """
   Updates a player's data
   """
@@ -159,13 +167,6 @@ defmodule KingOfTokyo.Game do
 
   defp has_equal_attribute?(%{} = map, {key, value}) do
     Map.get(map, key) == value
-  end
-
-  defp get_player_by_id(game, player_id) do
-    case find_player(game, %{id: player_id}) do
-      %Player{} = player -> {:ok, player}
-      nil -> {:error, :player_not_found}
-    end
   end
 
   defp update_player_by_id(players, player) do

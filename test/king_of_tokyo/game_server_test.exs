@@ -1,6 +1,7 @@
 defmodule KingOfTokyo.GameServerTest do
   use ExUnit.Case, async: true
 
+  alias KingOfTokyo.Game
   alias KingOfTokyo.GameServer
   alias KingOfTokyo.Player
 
@@ -173,6 +174,47 @@ defmodule KingOfTokyo.GameServerTest do
 
       assert {:ok, %{tokyo_city_player_id: nil, tokyo_bay_player_id: nil}} =
                GameServer.get_tokyo_state(game_id)
+    end
+  end
+
+  describe "get_game/1" do
+    test "returns the game if found" do
+      game_id = Ecto.UUID.generate()
+      {:ok, _pid} = GameServer.start_link(game_id)
+
+      assert {:ok, %Game{}} = GameServer.get_game(game_id)
+    end
+
+    test "returns an error if game not found" do
+      game_id = Ecto.UUID.generate()
+
+      assert {:error, :game_not_found} = GameServer.get_game(game_id)
+    end
+  end
+
+  describe "get_player_by_id/2" do
+    test "returns the player if found" do
+      game_id = Ecto.UUID.generate()
+      {:ok, _pid} = GameServer.start_link(game_id)
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert {:ok, ^player} = GameServer.get_player_by_id(game_id, player_id)
+    end
+
+    test "returns an error if player not found" do
+      game_id = Ecto.UUID.generate()
+      player_id = Ecto.UUID.generate()
+      {:ok, _pid} = GameServer.start_link(game_id)
+
+      assert {:error, :player_not_found} = GameServer.get_player_by_id(game_id, player_id)
+    end
+
+    test "returns an error if game not found" do
+      game_id = Ecto.UUID.generate()
+      player_id = Ecto.UUID.generate()
+
+      assert {:error, :game_not_found} = GameServer.get_player_by_id(game_id, player_id)
     end
   end
 end

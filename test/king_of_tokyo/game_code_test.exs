@@ -9,9 +9,9 @@ defmodule KingOfTokyo.GameCodeTest do
     end
   end
 
-  describe ".to_topic/0" do
-    test "converts code to topic" do
-      assert "game:f00bar" == GameCode.to_topic("F00-BAR")
+  describe ".to_game_id/0" do
+    test "converts code to game_id" do
+      assert "game:f00bar" == GameCode.to_game_id("F00-BAR")
     end
   end
 end

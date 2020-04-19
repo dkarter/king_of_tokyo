@@ -1,2 +1,2 @@
-<%= live_render(@conn, KingOfTokyoWeb.KingOfTokyoLive) %>
+<%= live_render(@conn, KingOfTokyoWeb.LobbyLive) %>
 

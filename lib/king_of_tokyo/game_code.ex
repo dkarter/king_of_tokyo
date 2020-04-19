@@ -12,7 +12,7 @@ defmodule KingOfTokyo.GameCode do
     |> Enum.join("-")
   end
 
-  def to_topic(code) do
+  def to_game_id(code) do
     code =
       code
       |> String.replace("-", "")

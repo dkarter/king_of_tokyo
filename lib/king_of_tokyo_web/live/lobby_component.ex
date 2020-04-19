@@ -88,6 +88,6 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, code: "", player_name: "", character: :the_king)}
+    {:ok, assign(socket, player_name: "", character: :the_king)}
   end
 end
