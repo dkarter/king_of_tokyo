@@ -13,7 +13,7 @@ defmodule KingOfTokyo.MixProject do
       releases: releases(),
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      version: "0.1.0"
+      version: "0.2.0"
     ]
   end
 
