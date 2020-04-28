@@ -53,7 +53,7 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
       ~r"priv/gettext/.*(po)$",
       ~r"lib/king_of_tokyo_web/(controllers|channels|live|views)/.*(ex)$",
       ~r"lib/king_of_tokyo_web/templates/.*(eex)$",
-      ~r"lib/king_of_tokyo/.*(ex)$",
+      ~r"lib/king_of_tokyo/.*(ex)$"
     ]
   ]
 
