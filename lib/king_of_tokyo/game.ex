@@ -5,24 +5,33 @@ defmodule KingOfTokyo.Game do
   """
 
   alias KingOfTokyo.Dice
+  alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player
 
   defstruct code: nil,
-            players: [],
             dice_state: %Dice{},
-            tokyo_city_player_id: nil,
-            tokyo_bay_player_id: nil
+            game_id: nil,
+            players: [],
+            tokyo_bay_player_id: nil,
+            tokyo_city_player_id: nil
 
-  @type t() :: %__MODULE__{
-          players: list(Player.t()),
+  @type t :: %__MODULE__{
+          code: GameCode.t(),
           dice_state: Dice.t(),
-          code: String.t() | nil,
-          tokyo_city_player_id: String.t() | nil,
-          tokyo_bay_player_id: String.t() | nil
+          game_id: String.t() | nil,
+          players: list(Player.t()),
+          tokyo_bay_player_id: String.t() | nil,
+          tokyo_city_player_id: String.t() | nil
         }
 
-  def new(code \\ nil) do
-    %__MODULE__{code: code}
+  @spec new(GameCode.t()) :: t()
+  def new(code) do
+    struct!(__MODULE__, code: code)
+  end
+
+  @spec new() :: t()
+  def new do
+    struct!(__MODULE__, code: GameCode.new())
   end
 
   @doc """

@@ -18,7 +18,7 @@ defmodule KingOfTokyo.Dice do
             roll_result: [],
             selected_roll_results: []
 
-  @type t() :: %__MODULE__{
+  @type t :: %__MODULE__{
           dice_count: pos_integer(),
           roll_count: pos_integer(),
           roll_result: list(integer()),

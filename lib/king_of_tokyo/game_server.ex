@@ -7,6 +7,7 @@ defmodule KingOfTokyo.GameServer do
 
   alias KingOfTokyo.Dice
   alias KingOfTokyo.Game
+  alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player
 
   require Logger
@@ -104,15 +105,15 @@ defmodule KingOfTokyo.GameServer do
     end
   end
 
+  @spec presence_player_ids(String.t()) :: list(String.t())
   def presence_player_ids(game_id) do
     game_id
     |> KingOfTokyoWeb.Presence.list()
     |> Enum.map(fn {player_id, _} -> player_id end)
   end
 
-  def start_link(game_id) do
-    Logger.info("Creating game server for: #{game_id}")
-    GenServer.start(__MODULE__, game_id, name: via_tuple(game_id))
+  def start_link(%GameCode{} = code) do
+    GenServer.start(__MODULE__, code, name: via_tuple(code.game_id))
   end
 
   def via_tuple(game_id) do
@@ -126,9 +127,10 @@ defmodule KingOfTokyo.GameServer do
   end
 
   @impl GenServer
-  def init(game_code) do
+  def init(%GameCode{} = code) do
+    Logger.info("Creating game server for #{code.game_code} (#{code.game_id})")
     {:ok, timer} = :timer.send_interval(@garbage_collection_interval, :garbage_collect)
-    {:ok, %{game: Game.new(game_code), garbage_collector_timer: timer}}
+    {:ok, %{game: Game.new(code), garbage_collector_timer: timer}}
   end
 
   @impl GenServer

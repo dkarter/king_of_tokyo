@@ -170,8 +170,8 @@ defmodule KingOfTokyoWeb.GameLive do
       else
         _ ->
           params =
-            if Map.has_key?(session, "code") do
-              Map.take(session, ["code"])
+            if Map.has_key?(session, "game_code") do
+              Map.take(session, ["game_code"])
             else
               []
             end
@@ -194,6 +194,6 @@ defmodule KingOfTokyoWeb.GameLive do
   end
 
   defp game_id(socket) do
-    socket.assigns.game.code
+    socket.assigns.game.code.game_id
   end
 end

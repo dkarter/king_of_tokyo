@@ -2,9 +2,9 @@ defmodule KingOfTokyoWeb.GameController do
   use KingOfTokyoWeb, :controller
 
   def join(conn, params) do
-    %{"code" => code, "game_id" => game_id, "player_id" => player_id} = params
+    %{"game_code" => game_code, "game_id" => game_id, "player_id" => player_id} = params
 
-    url = Routes.game_path(conn, :index, code: code)
+    url = Routes.game_path(conn, :index, game_code: game_code)
 
     conn
     |> put_session(:game_id, game_id)
@@ -12,9 +12,9 @@ defmodule KingOfTokyoWeb.GameController do
     |> redirect(to: url)
   end
 
-  def index(conn, %{"code" => code}) do
+  def index(conn, %{"game_code" => game_code}) do
     conn
-    |> put_session(:code, code)
+    |> put_session(:game_code, game_code)
     |> live_render(KingOfTokyoWeb.GameLive)
   end
 end

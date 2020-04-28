@@ -20,27 +20,26 @@ defmodule KingOfTokyoWeb.LobbyLive do
   end
 
   def handle_info({:join_game, attrs}, socket) do
-    %{code: code, player_name: player_name, character: character} = attrs
+    %{game_code: game_code, player_name: player_name, character: character} = attrs
 
     player = Player.new(player_name, character)
-    game_id = GameCode.to_game_id(code)
+    code = GameCode.new(game_code)
 
-    KingOfTokyo.GameSupervisor.start_game(game_id)
+    KingOfTokyo.GameSupervisor.start_game(code)
 
     socket =
-      case GameServer.add_player(game_id, player) do
+      case GameServer.add_player(code.game_id, player) do
         :ok ->
           url =
             Routes.game_path(
               socket,
               :join,
-              game_id: game_id,
-              code: code,
+              game_id: code.game_id,
+              game_code: code.game_code,
               player_id: player.id
             )
 
           socket
-          |> assign(code: code, player: player)
           |> put_temporary_flash(:info, "Joined successfully")
           |> push_redirect(to: url)
 
@@ -58,13 +57,13 @@ defmodule KingOfTokyoWeb.LobbyLive do
 
   def render(assigns) do
     ~L"""
-    <%= live_component(@socket, LobbyComponent, id: :lobby, code: @code) %>
+    <%= live_component(@socket, LobbyComponent, id: :lobby, game_code: @game_code) %>
     """
   end
 
   def mount(params, _session, socket) do
-    code = Map.get(params, "code", "")
-    {:ok, assign(socket, code: code)}
+    code = Map.get(params, "game_code", "")
+    {:ok, assign(socket, game_code: code)}
   end
 
   defp put_temporary_flash(socket, level, message) do
