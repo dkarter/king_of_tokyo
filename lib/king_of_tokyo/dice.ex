@@ -8,7 +8,7 @@ defmodule KingOfTokyo.Dice do
     1 => %{name: "one"},
     2 => %{name: "two"},
     3 => %{name: "three"},
-    4 => %{name: "lightning"},
+    4 => %{name: "energy"},
     5 => %{name: "claw"},
     6 => %{name: "heart"}
   }
@@ -18,7 +18,7 @@ defmodule KingOfTokyo.Dice do
             roll_result: [],
             selected_roll_results: []
 
-  @type t() :: %__MODULE__{
+  @type t :: %__MODULE__{
           dice_count: pos_integer(),
           roll_count: pos_integer(),
           roll_result: list(integer()),

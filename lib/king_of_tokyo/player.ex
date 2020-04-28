@@ -3,7 +3,15 @@ defmodule KingOfTokyo.Player do
   Represents a player in king of tokyo
   """
 
-  defstruct [:id, :name, :character, :health, :points]
+  defstruct [
+    :character,
+    :id,
+    :name,
+    counters: %{mimic: 0, poison: 0, shrink: 0, smoke: 0},
+    health: 10,
+    points: 0,
+    energy: 0
+  ]
 
   @characters %{
     the_king: "The King",
@@ -30,10 +38,17 @@ defmodule KingOfTokyo.Player do
           | :alienoid
 
   @type t :: %__MODULE__{
-          id: String.t(),
-          name: String.t(),
           character: character_type(),
+          counters: %{
+            mimic: non_neg_integer(),
+            poison: non_neg_integer(),
+            shrink: non_neg_integer(),
+            smoke: non_neg_integer()
+          },
           health: integer(),
+          id: String.t(),
+          energy: non_neg_integer(),
+          name: String.t(),
           points: integer()
         }
 
@@ -42,9 +57,7 @@ defmodule KingOfTokyo.Player do
     params = %{
       id: Ecto.UUID.generate(),
       name: name,
-      character: character,
-      health: 10,
-      points: 0
+      character: character
     }
 
     struct!(__MODULE__, params)
@@ -62,6 +75,8 @@ defmodule KingOfTokyo.Player do
   end
 
   @spec set_health(t(), String.t() | integer()) :: t()
+  def set_health(%__MODULE__{} = player, ""), do: player
+
   def set_health(%__MODULE__{} = player, health) when is_binary(health) do
     set_health(player, String.to_integer(health))
   end
@@ -78,7 +93,24 @@ defmodule KingOfTokyo.Player do
     Map.put(player, :health, health)
   end
 
+  @spec set_energy(t(), String.t() | integer()) :: t()
+  def set_energy(%__MODULE__{} = player, ""), do: player
+
+  def set_energy(%__MODULE__{} = player, energy) when is_binary(energy) do
+    set_energy(player, String.to_integer(energy))
+  end
+
+  def set_energy(%__MODULE__{} = player, energy) when energy < 0 do
+    set_energy(player, 0)
+  end
+
+  def set_energy(%__MODULE__{} = player, energy) do
+    Map.put(player, :energy, energy)
+  end
+
   @spec set_points(t(), String.t() | integer()) :: t()
+  def set_points(%__MODULE__{} = player, ""), do: player
+
   def set_points(%__MODULE__{} = player, points) when is_binary(points) do
     set_points(player, String.to_integer(points))
   end

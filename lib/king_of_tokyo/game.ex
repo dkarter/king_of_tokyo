@@ -5,20 +5,33 @@ defmodule KingOfTokyo.Game do
   """
 
   alias KingOfTokyo.Dice
+  alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player
 
   defstruct code: nil,
+            dice_state: %Dice{},
+            game_id: nil,
             players: [],
-            dice_state: %Dice{}
+            tokyo_bay_player_id: nil,
+            tokyo_city_player_id: nil
 
-  @type t() :: %__MODULE__{
-          players: list(Player.t()),
+  @type t :: %__MODULE__{
+          code: GameCode.t(),
           dice_state: Dice.t(),
-          code: String.t() | nil
+          game_id: String.t() | nil,
+          players: list(Player.t()),
+          tokyo_bay_player_id: String.t() | nil,
+          tokyo_city_player_id: String.t() | nil
         }
 
-  def new(code \\ nil) do
-    %__MODULE__{code: code}
+  @spec new(GameCode.t()) :: t()
+  def new(code) do
+    struct!(__MODULE__, code: code)
+  end
+
+  @spec new() :: t()
+  def new do
+    struct!(__MODULE__, code: GameCode.new())
   end
 
   @doc """
@@ -37,6 +50,14 @@ defmodule KingOfTokyo.Game do
 
       %Player{} ->
         {:error, :name_taken}
+    end
+  end
+
+  @spec get_player_by_id(t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
+  def get_player_by_id(game, player_id) do
+    case find_player(game, %{id: player_id}) do
+      %Player{} = player -> {:ok, player}
+      nil -> {:error, :player_not_found}
     end
   end
 
@@ -77,6 +98,64 @@ defmodule KingOfTokyo.Game do
   @spec list_players(t()) :: list(Player.t())
   def list_players(game), do: game.players
 
+  def reset_dice(game) do
+    %{game | dice_state: Dice.new()}
+  end
+
+  @doc """
+  Moves the player to Tokyo City or Tokyo Bay
+  """
+  @spec enter_tokyo(t(), String.t()) :: t()
+  def enter_tokyo(%{players: players} = game, player_id) when length(players) < 5 do
+    %{game | tokyo_city_player_id: player_id}
+  end
+
+  def enter_tokyo(%{tokyo_city_player_id: nil} = game, player_id) do
+    %{game | tokyo_city_player_id: player_id}
+  end
+
+  def enter_tokyo(%{tokyo_bay_player_id: nil} = game, player_id) do
+    %{game | tokyo_bay_player_id: player_id}
+  end
+
+  def enter_tokyo(game, player_id) do
+    %{game | tokyo_city_player_id: game.tokyo_bay_player_id, tokyo_bay_player_id: player_id}
+  end
+
+  @doc """
+  Moves the player out of Tokyo City or Tokyo Bay
+  """
+  @spec leave_tokyo(t(), String.t()) :: t()
+  def leave_tokyo(%{players: players} = game, player_id) when length(players) < 5 do
+    if game.tokyo_city_player_id == player_id do
+      %{game | tokyo_city_player_id: nil}
+    else
+      game
+    end
+  end
+
+  def leave_tokyo(%{tokyo_city_player_id: player_id, tokyo_bay_player_id: nil} = game, player_id) do
+    %{game | tokyo_city_player_id: nil}
+  end
+
+  def leave_tokyo(
+        %{tokyo_city_player_id: <<_::binary>>, tokyo_bay_player_id: player_id} = game,
+        player_id
+      ) do
+    %{game | tokyo_bay_player_id: nil}
+  end
+
+  def leave_tokyo(
+        %{tokyo_city_player_id: player_id, tokyo_bay_player_id: tokyo_bay_player_id} = game,
+        player_id
+      ) do
+    %{game | tokyo_city_player_id: tokyo_bay_player_id, tokyo_bay_player_id: nil}
+  end
+
+  def leave_tokyo(game, _player_id) do
+    game
+  end
+
   defp find_player(game, %{} = attrs, match: :any) do
     game.players
     |> Enum.find(fn player ->
@@ -97,17 +176,6 @@ defmodule KingOfTokyo.Game do
 
   defp has_equal_attribute?(%{} = map, {key, value}) do
     Map.get(map, key) == value
-  end
-
-  def reset_dice(game) do
-    %{game | dice_state: Dice.new()}
-  end
-
-  defp get_player_by_id(game, player_id) do
-    case find_player(game, %{id: player_id}) do
-      %Player{} = player -> {:ok, player}
-      nil -> {:error, :player_not_found}
-    end
   end
 
   defp update_player_by_id(players, player) do

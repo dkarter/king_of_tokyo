@@ -51,8 +51,9 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/king_of_tokyo_web/(live|views)/.*(ex)$",
-      ~r"lib/king_of_tokyo_web/templates/.*(eex)$"
+      ~r"lib/king_of_tokyo_web/(controllers|channels|live|views)/.*(ex)$",
+      ~r"lib/king_of_tokyo_web/templates/.*(eex)$",
+      ~r"lib/king_of_tokyo/.*(ex)$"
     ]
   ]
 

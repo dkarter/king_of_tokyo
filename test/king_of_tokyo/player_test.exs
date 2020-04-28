@@ -67,6 +67,20 @@ defmodule KingOfTokyo.PlayerTest do
     end
   end
 
+  describe ".set_energy/2" do
+    test "sets a player's energy" do
+      assert %{energy: 12} = Player.set_energy(%Player{}, 12)
+    end
+
+    test "accepts string and turns it into integer" do
+      assert %{energy: 12} = Player.set_energy(%Player{}, "12")
+    end
+
+    test "cannot be less than 0" do
+      assert %{energy: 0} = Player.set_energy(%Player{}, -1)
+    end
+  end
+
   describe ".character_name/1" do
     test "returns a string for character name" do
       assert "The King" == Player.character_name(%Player{character: :the_king})

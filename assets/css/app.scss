@@ -4,9 +4,19 @@
 
 @import '../../deps/phoenix_live_view/assets/css/live_view.css';
 
-.button.danger {
+.button-danger {
   background-color: #a94442;
-  border: none;
+  border-color: #a94442;
+}
+
+.button-danger.button-clear,
+.button-danger.button-outline {
+  background-color: transparent;
+  color: #a94442;
+}
+
+.button-danger.button-clear {
+  border-color: transparent;
 }
 
 .logo img {
@@ -64,10 +74,14 @@ main.container {
   }
 }
 
-.player-card form {
-  display: flex;
-  justify-content: space-between;
-  min-width: 65rem;
+.player-card {
+  form {
+    min-width: 65rem;
+  }
+
+  input[type='number'] {
+    max-width: 5rem;
+  }
 }
 
 .dice-roll {
@@ -125,8 +139,8 @@ main.container {
     background-image: url('/images/dice/black/heart.svg');
   }
 
-  &.lightning.black {
-    background-image: url('/images/dice/black/lightning.svg');
+  &.energy.black {
+    background-image: url('/images/dice/black/energy.svg');
   }
 
   &.one.black {
@@ -149,8 +163,8 @@ main.container {
     background-image: url('/images/dice/green/heart.svg');
   }
 
-  &.lightning.green {
-    background-image: url('/images/dice/green/lightning.svg');
+  &.energy.green {
+    background-image: url('/images/dice/green/energy.svg');
   }
 
   &.one.green {

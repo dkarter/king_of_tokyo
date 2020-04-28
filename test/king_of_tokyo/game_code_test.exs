@@ -3,15 +3,15 @@ defmodule KingOfTokyo.GameCodeTest do
 
   alias KingOfTokyo.GameCode
 
-  describe ".generate/0" do
-    test "generates a code" do
-      assert String.match?(GameCode.generate(), ~r/^[A-Z0-9]{3}-[A-Z0-9]{3}$/)
+  describe ".new/1" do
+    test "returns a game code struct with the game id" do
+      assert %GameCode{game_code: "FOO-BAR", game_id: "game:foobar"} == GameCode.new("FOO-BAR")
     end
   end
 
-  describe ".to_topic/0" do
-    test "converts code to topic" do
-      assert "game:f00bar" == GameCode.to_topic("F00-BAR")
+  describe ".generate/0" do
+    test "generates a code" do
+      assert String.match?(GameCode.generate_game_code(), ~r/^[A-Z0-9]{3}-[A-Z0-9]{3}$/)
     end
   end
 end

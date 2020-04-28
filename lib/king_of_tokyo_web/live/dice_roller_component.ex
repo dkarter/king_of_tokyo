@@ -23,6 +23,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   end
 
   def handle_event("update", %{"dice_count" => dice_count}, socket) do
+    dice_count = if dice_count == "", do: "0", else: dice_count
     send(self(), {:set_dice_count, dice_count})
     {:noreply, socket}
   end
@@ -55,7 +56,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   end
 
   def render_dice(assigns) do
-    results_with_index = assigns.dice_state.roll_result |> Enum.with_index()
+    results_with_index = Enum.with_index(assigns.dice_state.roll_result)
 
     ~L"""
     <div class="dice">
@@ -71,7 +72,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
     disabled = if has_results, do: "", else: "disabled"
 
     ~L"""
-    <button type="reset" class="button danger" <%= disabled %> phx-click="reset" phx-target="#<%= @id %>">Reset</button>
+    <button type="reset" class="button button-danger" <%= disabled %> phx-click="reset" phx-target="#<%= @id %>">Reset</button>
     """
   end
 
@@ -86,14 +87,16 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
 
     has_results = length(roll_result) > 0
     roll_action = if has_results, do: "re-roll", else: "roll"
-    dice_count_input_disabled = if has_results, do: "disabled", else: ""
 
     ~L"""
     <div class="dice-roll">
       <form id="<%= @id %>" action="#" phx-change="update" phx-submit="<%= roll_action %>" phx-target="#<%= @id %>">
-        <input type="number" <%= dice_count_input_disabled %> min="1" max="8" name="dice_count" placeholder="How many dice?" value="<%= dice_count %>" />
+        <label>
+          How many dice
+          <input type="number" <%= if has_results, do: "disabled" %> min="1" max="8" name="dice_count" placeholder="How many dice?" value="<%= dice_count %>" />
+        </label>
         <div class="roll-count">
-          <div>Rolls</div>
+          <div>Roll Count:</div>
           <div><%= roll_count %></div>
         </div>
         <button type="submit"><%= roll_action %></button>

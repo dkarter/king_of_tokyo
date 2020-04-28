@@ -1,38 +1,46 @@
 defmodule KingOfTokyo.GameServerTest do
   use ExUnit.Case, async: true
 
+  alias KingOfTokyo.Game
+  alias KingOfTokyo.GameCode
   alias KingOfTokyo.GameServer
   alias KingOfTokyo.Player
 
-  describe ".start_link" do
-    test "starts a new game" do
-      assert {:ok, pid} = GameServer.start_link(Ecto.UUID.generate())
+  setup do
+    %{game_id: game_id} = code = GameCode.new()
+    {:ok, _pid} = GameServer.start_link(code)
+    {:ok, %{game_id: game_id}}
+  end
+
+  describe ".game_pid/1" do
+    test "returns the game's pid", %{game_id: game_id} do
+      pid = GameServer.game_pid(game_id)
       assert is_pid(pid)
+    end
+
+    test "returns nil when does not exist" do
+      assert nil == GameServer.game_pid("foobar")
     end
   end
 
   describe ".add_player/2" do
-    test "adds a player to the game instance" do
-      game_id = Ecto.UUID.generate()
+    test "adds a player to the game instance", %{game_id: game_id} do
       player = Player.new("Joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
+
       assert :ok = GameServer.add_player(game_id, player)
       assert {:ok, [^player]} = GameServer.list_players(game_id)
     end
 
-    test "returns an error if a player with the same character already exists" do
-      game_id = Ecto.UUID.generate()
+    test "returns an error if player with the same character already exists", %{game_id: game_id} do
       player = Player.new("Joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
+
       assert :ok = GameServer.add_player(game_id, player)
       assert {:error, :character_taken} = GameServer.add_player(game_id, player)
       assert {:ok, [^player]} = GameServer.list_players(game_id)
     end
 
-    test "returns an error if a player with the same name already exists" do
-      game_id = Ecto.UUID.generate()
+    test "returns an error if a player with the same name already exists", %{game_id: game_id} do
       player = Player.new("Joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
 
       assert :ok = GameServer.add_player(game_id, player)
 
@@ -44,47 +52,38 @@ defmodule KingOfTokyo.GameServerTest do
   end
 
   describe ".update_player/2" do
-    test "updates a player in the game instance" do
-      game_id = Ecto.UUID.generate()
+    test "updates a player in the game instance", %{game_id: game_id} do
       player = Player.new("Joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
       :ok = GameServer.add_player(game_id, player)
       updated_player = Map.put(player, :character, :giga_zaur)
+
       assert :ok = GameServer.update_player(game_id, updated_player)
       assert {:ok, [^updated_player]} = GameServer.list_players(game_id)
     end
 
-    test "returns an error if player is not found" do
-      game_id = Ecto.UUID.generate()
+    test "returns an error if player is not found", %{game_id: game_id} do
       player = Player.new("joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
 
       assert {:error, :player_not_found} = GameServer.update_player(game_id, player)
     end
   end
 
   describe ".remove_player/2" do
-    test "removes a player from the game instance" do
-      game_id = Ecto.UUID.generate()
+    test "removes a player from the game instance", %{game_id: game_id} do
       player = Player.new("Joe", :the_king)
-      {:ok, _pid} = GameServer.start_link(game_id)
       :ok = GameServer.add_player(game_id, player)
+
       assert :ok = GameServer.remove_player(game_id, player.id)
       assert {:ok, []} = GameServer.list_players(game_id)
     end
 
-    test "returns :ok and ignores request if player is not found" do
-      game_id = Ecto.UUID.generate()
-      {:ok, _pid} = GameServer.start_link(game_id)
+    test "returns :ok and ignores request if player is not found", %{game_id: game_id} do
       assert :ok = GameServer.remove_player(game_id, "foobar")
     end
   end
 
   describe ".reset_dice/1" do
-    test "resets roll results, dice counts and dice selections" do
-      game_id = Ecto.UUID.generate()
-      {:ok, _pid} = GameServer.start_link(game_id)
-
+    test "resets roll results, dice counts and dice selections", %{game_id: game_id} do
       assert {:ok, dice_state} = GameServer.reset_dice(game_id)
       assert {:ok, ^dice_state} = GameServer.get_dice_state(game_id)
 
@@ -98,10 +97,7 @@ defmodule KingOfTokyo.GameServerTest do
   end
 
   describe ".roll_dice/1" do
-    test "generates new dice results and updates roll counts" do
-      game_id = Ecto.UUID.generate()
-      {:ok, _pid} = GameServer.start_link(game_id)
-
+    test "generates new dice results and updates roll counts", %{game_id: game_id} do
       assert {:ok, dice_state} = GameServer.roll_dice(game_id)
       assert {:ok, ^dice_state} = GameServer.get_dice_state(game_id)
 
@@ -115,10 +111,7 @@ defmodule KingOfTokyo.GameServerTest do
   end
 
   describe ".re_roll_dice/1" do
-    test "generates new dice results and updates roll counts" do
-      game_id = Ecto.UUID.generate()
-      {:ok, _pid} = GameServer.start_link(game_id)
-
+    test "generates new dice results and updates roll counts", %{game_id: game_id} do
       assert {:ok, dice_state} = GameServer.roll_dice(game_id)
 
       die_2 = Enum.at(dice_state.roll_result, 1)
@@ -139,11 +132,67 @@ defmodule KingOfTokyo.GameServerTest do
   end
 
   describe ".set_dice_count/2" do
-    test "updates the dice count for everyone" do
-      game_id = Ecto.UUID.generate()
-      {:ok, _pid} = GameServer.start_link(game_id)
-
+    test "updates the dice count for everyone", %{game_id: game_id} do
       assert {:ok, %{dice_count: 5}} = GameServer.set_dice_count(game_id, 5)
+    end
+  end
+
+  describe ".enter_tokyo/2" do
+    test "puts the player in tokyo", %{game_id: game_id} do
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert :ok = GameServer.enter_tokyo(game_id, player_id)
+
+      assert {:ok, %{tokyo_city_player_id: ^player_id, tokyo_bay_player_id: nil}} =
+               GameServer.get_tokyo_state(game_id)
+    end
+  end
+
+  describe ".leave_tokyo/2" do
+    test "removes the player from tokyo", %{game_id: game_id} do
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert :ok = GameServer.enter_tokyo(game_id, player_id)
+      assert :ok = GameServer.leave_tokyo(game_id, player_id)
+
+      assert {:ok, %{tokyo_city_player_id: nil, tokyo_bay_player_id: nil}} =
+               GameServer.get_tokyo_state(game_id)
+    end
+  end
+
+  describe "get_game/1" do
+    test "returns the game if found", %{game_id: game_id} do
+      assert {:ok, %Game{}} = GameServer.get_game(game_id)
+    end
+
+    test "returns an error if game not found" do
+      %{game_id: game_id} = GameCode.new()
+
+      assert {:error, :game_not_found} = GameServer.get_game(game_id)
+    end
+  end
+
+  describe "get_player_by_id/2" do
+    test "returns the player if found", %{game_id: game_id} do
+      %{id: player_id} = player = Player.new("Jane", :the_king)
+      :ok = GameServer.add_player(game_id, player)
+
+      assert {:ok, ^player} = GameServer.get_player_by_id(game_id, player_id)
+    end
+
+    test "returns an error if player not found", %{game_id: game_id} do
+      player_id = Ecto.UUID.generate()
+
+      assert {:error, :player_not_found} = GameServer.get_player_by_id(game_id, player_id)
+    end
+
+    test "returns an error if game not found" do
+      %{game_id: game_id} = GameCode.new()
+      %{id: player_id} = Player.new("Jane", :the_king)
+
+      assert {:error, :game_not_found} = GameServer.get_player_by_id(game_id, player_id)
     end
   end
 end

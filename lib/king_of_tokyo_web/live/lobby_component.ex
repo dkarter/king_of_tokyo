@@ -19,10 +19,10 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def handle_event("join-game", fields, socket) do
-    %{"code" => code, "player_name" => player_name, "character" => character} = fields
+    %{"game_code" => code, "player_name" => player_name, "character" => character} = fields
 
     payload = %{
-      code: code,
+      game_code: code,
       player_name: player_name,
       character: String.to_existing_atom(character)
     }
@@ -33,12 +33,12 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def handle_event("update", fields, socket) do
-    %{"code" => code, "player_name" => player_name, "character" => character} = fields
+    %{"game_code" => code, "player_name" => player_name, "character" => character} = fields
 
     socket =
       socket
       |> assign(
-        code: code,
+        game_code: code,
         player_name: player_name,
         character: String.to_existing_atom(character)
       )
@@ -47,7 +47,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def handle_event("generate-code", _, socket) do
-    {:noreply, assign(socket, code: GameCode.generate())}
+    {:noreply, assign(socket, game_code: GameCode.generate_game_code())}
   end
 
   def render_character_select(assigns) do
@@ -77,7 +77,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
         <label>
           Game Code:
           <div class="game-code-field">
-            <input name="code" type="text" value="<%= @code %>"/>
+            <input name="game_code" type="text" value="<%= @game_code %>"/>
             <button type="button" phx-click="generate-code" phx-target="#<%= @id %>">Generate</button>
           </div>
         </label>
@@ -88,6 +88,6 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, code: "", player_name: "", character: :the_king)}
+    {:ok, assign(socket, player_name: "", character: :the_king)}
   end
 end
