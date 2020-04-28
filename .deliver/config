@@ -12,6 +12,8 @@ DELIVER_TO="/home/deploy/app_release"
 
 GIT_CLEAN_PATHS="priv/static"
 
+AUTO_VERSION=commit-count+git-revision+branch-unless-master
+
 pre_erlang_get_and_update_deps() {
   local _prod_secret_path="/home/$BUILD_USER/app_config/prod.secret.exs"
 
