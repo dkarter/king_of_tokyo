@@ -20,6 +20,16 @@
         src: nginx.conf
         dest: /etc/nginx/nginx.conf
 
+    - name: Ensure Nginx Modules dir exists
+      file:
+        path: /etc/nginx/modules
+        state: directory
+
+    - name: Nginx SSL Shared Settings Module
+      template:
+        src: shared_ssl_settings
+        dest: /etc/nginx/modules/shared_ssl_settings
+
     - name: Configure nginx for the app
       template:
         src: "theking.nginx"
