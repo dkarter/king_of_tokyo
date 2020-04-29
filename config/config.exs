@@ -12,7 +12,7 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "NTgl0xISBNgY2ptug3o7jRZHHTuZLk55PkafMNDuuA4fF/hiV8Kv+i2Nd135UJYC",
   render_errors: [view: KingOfTokyoWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: KingOfTokyo.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: KingOfTokyo.PubSub,
   live_view: [
     signing_salt: "k7DcUyJV84u/p1HGn9/G12KANWC85x7B"
   ]
