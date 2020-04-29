@@ -31,6 +31,13 @@ const domain = new DigitalOcean.Domain(domainName, {
   ipAddress: droplet.ipv4Address,
 });
 
+new DigitalOcean.DnsRecord('www', {
+  domain: domain.name,
+  name: 'www',
+  value: droplet.ipv4Address,
+  type: 'A',
+});
+
 new DigitalOcean.Project(projectName, {
   name: domainName,
   resources: [
