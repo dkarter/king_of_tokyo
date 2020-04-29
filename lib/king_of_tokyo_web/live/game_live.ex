@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.GameLive do
   LiveView implementation of King Of Tokyo
   """
 
-  use Phoenix.LiveView, layout: {KingOfTokyoWeb.LayoutView, "live.html"}
+  use KingOfTokyoWeb, :live_view
 
   alias KingOfTokyo.GameServer
   alias KingOfTokyoWeb.DiceRollerComponent

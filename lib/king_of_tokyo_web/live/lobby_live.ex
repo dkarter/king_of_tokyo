@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.LobbyLive do
   Lobby for joining a game
   """
 
-  use Phoenix.LiveView, layout: {KingOfTokyoWeb.LayoutView, "live.html"}
+  use KingOfTokyoWeb, :live_view
 
   alias KingOfTokyo.GameCode
   alias KingOfTokyo.GameServer

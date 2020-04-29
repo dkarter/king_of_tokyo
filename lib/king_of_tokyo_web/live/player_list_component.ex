@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.PlayerListComponent do
   Displays all players' stats
   """
 
-  use Phoenix.LiveComponent
+  use KingOfTokyoWeb, :live_component
 
   alias KingOfTokyo.Player
 
