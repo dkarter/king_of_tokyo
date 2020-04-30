@@ -17,6 +17,10 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
     signing_salt: "k7DcUyJV84u/p1HGn9/G12KANWC85x7B"
   ]
 
+config :king_of_tokyo,
+  admin_username: "admin",
+  admin_password: "admin"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

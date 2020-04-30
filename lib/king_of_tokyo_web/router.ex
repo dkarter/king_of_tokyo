@@ -1,6 +1,9 @@
 defmodule KingOfTokyoWeb.Router do
   use KingOfTokyoWeb, :router
 
+  import Plug.BasicAuth
+  import Phoenix.LiveDashboard.Router
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -14,6 +17,12 @@ defmodule KingOfTokyoWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admin do
+    plug :basic_auth,
+      username: Application.get_env(:king_of_tokyo, :admin_username),
+      password: Application.get_env(:king_of_tokyo, :admin_password)
+  end
+
   scope "/", KingOfTokyoWeb do
     pipe_through :browser
 
@@ -22,19 +31,8 @@ defmodule KingOfTokyoWeb.Router do
     get("/game", GameController, :index)
   end
 
-  # Enables LiveDashboard only for development
-  #
-  # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
-  # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
-  # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
-
-    scope "/" do
-      pipe_through :browser
-      live_dashboard "/dashboard", metrics: KingOfTokyoWeb.Telemetry
-    end
+  scope "/admin" do
+    pipe_through [:browser, :admin]
+    live_dashboard "/dashboard", metrics: KingOfTokyoWeb.Telemetry
   end
 end

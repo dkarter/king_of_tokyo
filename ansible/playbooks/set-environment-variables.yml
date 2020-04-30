@@ -28,3 +28,19 @@
         line: "export KING_OF_TOKYO_ERLANG_COOKIE='{{ king_of_tokyo_erlang_cookie }}'"
         state: present
         backup: yes
+
+    - name: Set KING_OF_TOKYO_ADMIN_USERNAME
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^export KING_OF_TOKYO_ADMIN_USERNAME='
+        line: "export KING_OF_TOKYO_ADMIN_USERNAME='{{ king_of_tokyo_admin_username }}'"
+        state: present
+        backup: yes
+
+    - name: Set KING_OF_TOKYO_ADMIN_PASSWORD
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^export KING_OF_TOKYO_ADMIN_PASSWORD='
+        line: "export KING_OF_TOKYO_ADMIN_PASSWORD='{{ king_of_tokyo_admin_password }}'"
+        state: present
+        backup: yes
