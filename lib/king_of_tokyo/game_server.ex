@@ -233,7 +233,7 @@ defmodule KingOfTokyo.GameServer do
 
   @impl GenServer
   def handle_info(:garbage_collect, state) do
-    game_id = state.game.code
+    game_id = state.game.code.game_id
 
     Logger.info("Running garbage collection for: #{game_id}")
     presence_player_ids = presence_player_ids(game_id)
