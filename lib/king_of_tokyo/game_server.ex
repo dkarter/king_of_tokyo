@@ -105,13 +105,6 @@ defmodule KingOfTokyo.GameServer do
     end
   end
 
-  @spec presence_player_ids(String.t()) :: list(String.t())
-  def presence_player_ids(game_id) do
-    game_id
-    |> KingOfTokyoWeb.Presence.list()
-    |> Enum.map(fn {player_id, _} -> player_id end)
-  end
-
   def start_link(%GameCode{} = code) do
     GenServer.start(__MODULE__, code, name: via_tuple(code.game_id))
   end
@@ -262,6 +255,13 @@ defmodule KingOfTokyo.GameServer do
       nil ->
         {:error, :game_not_found}
     end
+  end
+
+  @spec presence_player_ids(String.t()) :: list(String.t())
+  defp presence_player_ids(game_id) do
+    game_id
+    |> KingOfTokyoWeb.Presence.list()
+    |> Enum.map(fn {player_id, _} -> player_id end)
   end
 
   defp broadcast_dice_updated!(game_id, dice_state) do
