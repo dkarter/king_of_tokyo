@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   UI for joining a game room
   """
 
-  use Phoenix.LiveComponent
+  use KingOfTokyoWeb, :live_component
 
   alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player

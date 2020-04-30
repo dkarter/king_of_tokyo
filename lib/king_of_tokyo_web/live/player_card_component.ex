@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
   Form for updating current player's attributes
   """
 
-  use Phoenix.LiveComponent
+  use KingOfTokyoWeb, :live_component
 
   alias KingOfTokyo.Player
 

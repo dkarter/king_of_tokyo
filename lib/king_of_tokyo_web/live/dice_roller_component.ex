@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.DiceRollerComponent do
   Interface for rolling the King Of Tokyo Dice
   """
 
-  use Phoenix.LiveComponent
+  use KingOfTokyoWeb, :live_component
 
   alias KingOfTokyo.Dice
 

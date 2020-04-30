@@ -8,7 +8,7 @@ defmodule KingOfTokyo.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       deps: deps(),
       dialyzer: dialyzer(),
-      elixir: "~> 1.5",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
       start_permanent: Mix.env() == :prod,
@@ -23,7 +23,7 @@ defmodule KingOfTokyo.MixProject do
   def application do
     [
       mod: {KingOfTokyo.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -38,20 +38,23 @@ defmodule KingOfTokyo.MixProject do
     [
       {:credo, "~> 1.3", rutime: false, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", runtime: false, only: [:dev, :test]},
+      {:distillery, "~> 2.1.1"},
       {:ecto, "~> 3.3"},
+      {:edeliver, "~> 1.8.0"},
       {:excoveralls, "~> 0.12", only: :test},
       {:faker, "~> 0.13"},
       {:floki, ">= 0.0.0", only: :test},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:phoenix, "~> 1.4.12"},
+      {:phoenix, "~> 1.5.0"},
       {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.10"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:plug_cowboy, "~> 2.0"},
-      {:edeliver, "~> 1.8.0"},
-      {:distillery, "~> 2.1.1"}
+      {:phoenix_live_dashboard, "~> 0.2.0"},
+      {:phoenix_live_reload, "~> 1.2.1", only: :dev},
+      {:phoenix_live_view, "~> 0.12"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:plug_cowboy, "~> 2.1"},
+      {:telemetry_metrics, "~> 0.4"},
+      {:telemetry_poller, "~> 0.4"}
     ]
   end
 

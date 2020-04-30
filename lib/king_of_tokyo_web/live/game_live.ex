@@ -3,7 +3,7 @@ defmodule KingOfTokyoWeb.GameLive do
   LiveView implementation of King Of Tokyo
   """
 
-  use Phoenix.LiveView, layout: {KingOfTokyoWeb.LayoutView, "live.html"}
+  use KingOfTokyoWeb, :live_view
 
   alias KingOfTokyo.GameServer
   alias KingOfTokyoWeb.DiceRollerComponent
@@ -165,7 +165,7 @@ defmodule KingOfTokyoWeb.GameLive do
            {:ok, game} <- GameServer.get_game(game_id),
            {:ok, player} <- GameServer.get_player_by_id(game_id, player_id),
            {:ok, _} <- Presence.track(self(), game_id, player_id, %{}),
-           :ok <- KingOfTokyoWeb.Endpoint.subscribe(game_id) do
+           :ok <- Phoenix.PubSub.subscribe(KingOfTokyo.PubSub, game_id) do
         assign(socket, game: game, player: player)
       else
         _ ->

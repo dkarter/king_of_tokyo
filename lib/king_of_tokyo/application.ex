@@ -8,6 +8,10 @@ defmodule KingOfTokyo.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      # Start the Telemetry supervisor
+      KingOfTokyoWeb.Telemetry,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: KingOfTokyo.PubSub},
       # Start the endpoint when the application starts
       KingOfTokyoWeb.Endpoint,
       KingOfTokyoWeb.Presence,
