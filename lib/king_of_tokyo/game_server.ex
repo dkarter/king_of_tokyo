@@ -17,6 +17,7 @@ defmodule KingOfTokyo.GameServer do
   def add_player(game_id, player) do
     with :ok <- call_by_name(game_id, {:add_player, player}) do
       broadcast_players_updated!(game_id)
+      :telemetry.execute([:king_of_tokyo, :player_joined], %{count: 1})
     end
   end
 
