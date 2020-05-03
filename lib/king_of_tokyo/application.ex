@@ -8,15 +8,16 @@ defmodule KingOfTokyo.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the Telemetry supervisor
-      KingOfTokyoWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: KingOfTokyo.PubSub},
       # Start the endpoint when the application starts
       KingOfTokyoWeb.Endpoint,
-      KingOfTokyoWeb.Presence,
       {Registry, keys: :unique, name: KingOfTokyo.GameRegistry},
-      KingOfTokyo.GameSupervisor
+      KingOfTokyoWeb.Presence,
+      KingOfTokyo.GameSupervisor,
+      KingOfTokyo.GameGarbageCollector,
+      # Start the Telemetry supervisor
+      KingOfTokyoWeb.Telemetry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -6,6 +6,7 @@ defmodule KingOfTokyo.GameSupervisor do
   use DynamicSupervisor
 
   alias KingOfTokyo.GameCode
+  alias KingOfTokyo.GameServer
 
   def start_link(_arg) do
     DynamicSupervisor.start_link(__MODULE__, nil, name: __MODULE__)
@@ -18,8 +19,8 @@ defmodule KingOfTokyo.GameSupervisor do
   @spec start_game(GameCode.t()) :: {:ok, pid()} | {:error, {:already_started, pid()}}
   def start_game(%GameCode{} = code) do
     child_spec = %{
-      id: KingOfTokyo.GameServer,
-      start: {KingOfTokyo.GameServer, :start_link, [code]},
+      id: GameServer,
+      start: {GameServer, :start_link, [code]},
       restart: :transient
     }
 
@@ -35,5 +36,9 @@ defmodule KingOfTokyo.GameSupervisor do
       nil ->
         :ok
     end
+  end
+
+  def which_children do
+    Supervisor.which_children(__MODULE__)
   end
 end
