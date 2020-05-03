@@ -12,11 +12,10 @@ defmodule KingOfTokyo.GameServer do
 
   require Logger
 
-  @garbage_collection_interval :timer.minutes(5)
-
   def add_player(game_id, player) do
     with :ok <- call_by_name(game_id, {:add_player, player}) do
       broadcast_players_updated!(game_id)
+      :telemetry.execute([:king_of_tokyo, :player_joined], %{count: 1})
     end
   end
 
@@ -58,7 +57,11 @@ defmodule KingOfTokyo.GameServer do
     call_by_name(game_id, :get_tokyo_state)
   end
 
-  @spec get_game(String.t()) :: {:ok, Game.t()} | {:error, :game_not_found}
+  @spec get_game(String.t() | pid()) :: {:ok, Game.t()} | {:error, :game_not_found}
+  def get_game(pid) when is_pid(pid) do
+    GenServer.call(pid, :get_game)
+  end
+
   def get_game(game_id) do
     call_by_name(game_id, :get_game)
   end
@@ -116,10 +119,6 @@ defmodule KingOfTokyo.GameServer do
     GenServer.start(__MODULE__, code, name: via_tuple(code.game_id))
   end
 
-  def via_tuple(game_id) do
-    {:via, Registry, {KingOfTokyo.GameRegistry, game_id}}
-  end
-
   def game_pid(game_id) do
     game_id
     |> via_tuple()
@@ -129,8 +128,7 @@ defmodule KingOfTokyo.GameServer do
   @impl GenServer
   def init(%GameCode{} = code) do
     Logger.info("Creating game server for #{code.game_code} (#{code.game_id})")
-    {:ok, timer} = :timer.send_interval(@garbage_collection_interval, :garbage_collect)
-    {:ok, %{game: Game.new(code), garbage_collector_timer: timer}}
+    {:ok, %{game: Game.new(code)}}
   end
 
   @impl GenServer
@@ -238,22 +236,6 @@ defmodule KingOfTokyo.GameServer do
     {:reply, {:ok, dice_state}, %{state | game: game}}
   end
 
-  @impl GenServer
-  def handle_info(:garbage_collect, state) do
-    game_id = state.game.code
-
-    Logger.info("Running garbage collection for: #{game_id}")
-    presence_player_ids = presence_player_ids(game_id)
-
-    if presence_player_ids == [] do
-      Logger.info("No more players present on: #{game_id}, shutting down game server...")
-      :timer.cancel(state.garbage_collector_timer)
-      KingOfTokyo.GameSupervisor.stop_game(game_id)
-    end
-
-    {:noreply, state}
-  end
-
   defp call_by_name(game_id, command) do
     case game_pid(game_id) do
       game_pid when is_pid(game_pid) ->
@@ -274,5 +256,10 @@ defmodule KingOfTokyo.GameServer do
 
   defp broadcast_tokyo_updated!(game_id, tokyo_state) do
     KingOfTokyoWeb.Endpoint.broadcast!(game_id, "tokyo_updated", tokyo_state)
+  end
+
+  @spec via_tuple(String.t()) :: {:via, atom(), {atom(), String.t()}}
+  defp via_tuple(game_id) do
+    {:via, Registry, {KingOfTokyo.GameRegistry, game_id}}
   end
 end

@@ -52,3 +52,17 @@ symlink_static(){
     ln -sfn $DELIVER_TO/$APP/releases/$VERSION/static $DELIVER_TO
   "
 }
+
+# Temporary workaround from https://github.com/edeliver/edeliver/issues/314#issuecomment-522151151
+# start_erl.data is not being upgraded when new release is deployed
+# should not be necessary once a new distillery version is released (> 2.1.1):
+# https://github.com/bitwalker/distillery/issues/729
+post_extract_release_archive() {
+  status "Removing start_erl.data"
+  __remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO/$APP/var $SILENCE
+    rm start_erl.data
+  "
+}

@@ -37,21 +37,17 @@ defmodule KingOfTokyoWeb.GameLive do
     %{game: game} = socket.assigns
     game_id = game_id(socket)
 
-    {:ok, players} = GameServer.list_players(game_id)
-    presence_player_ids = GameServer.presence_player_ids(game_id)
-
-    players = Enum.filter(players, fn %{id: id} -> id in presence_player_ids end)
+    players =
+      game_id
+      |> Presence.list()
+      |> Enum.map(fn {_k, %{player: player}} -> player end)
 
     {:noreply, assign(socket, game: %{game | players: players})}
   end
 
-  def handle_info(%{event: "presence_diff", payload: _payload}, socket) do
+  def handle_info(%{event: "presence_diff", payload: _}, socket) do
     game_id = game_id(socket)
 
-    # payload.leaves
-    # |> Enum.each(fn {player_id, _} ->
-    #   :ok = GameServer.mark_offline(game_id, player_id)
-    # end)
     KingOfTokyoWeb.Endpoint.broadcast!(game_id, "players_updated", %{})
 
     {:noreply, socket}

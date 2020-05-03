@@ -1,3 +1,5 @@
 ---
 king_of_tokyo_secret_key_base: "{{ secret_king_of_tokyo_secret_key_base }}"
 king_of_tokyo_erlang_cookie: "{{ secret_king_of_tokyo_erlang_cookie }}"
+king_of_tokyo_admin_username: "{{ secret_king_of_tokyo_admin_username }}"
+king_of_tokyo_admin_password: "{{ secret_king_of_tokyo_admin_password }}"
