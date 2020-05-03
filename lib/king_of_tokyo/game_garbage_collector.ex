@@ -1,4 +1,8 @@
 defmodule KingOfTokyo.GameGarbageCollector do
+  @moduledoc """
+  Stops games with no active players
+  """
+
   use GenServer
 
   alias KingOfTokyo.GameServer
