@@ -25,25 +25,25 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 2. Get an API token from the API section on the sidebar and export an API token like so:
 
 ```bash
-export DIGITALOCEAN_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+$ export DIGITALOCEAN_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 3. Create an ssh key for the project for the project:
 
 ```bash
-ssh-keygen -f ~/.ssh/theking
+$ ssh-keygen -f ~/.ssh/theking
 ```
 
 4. Install Pulumi dependencies:
 
 ```bash
-yarn --cwd infra
+$ yarn --cwd infra
 ```
 
 5. Run Pulumi to associate your ssh key, create a droplet, domain and firewall:
 
 ```bash
-mix pulumi up
+$ mix pulumi up
 ```
 
 6. Store the Ansible Vault password in `ansible/.vault-password`
@@ -51,17 +51,17 @@ mix pulumi up
 7. Run Ansible to provision the droplet:
 
 ```bash
-mix ansible
+$ mix ansible
 ```
 
 8. Build the release using edeliver:
 
 ```bash
-mix edeliver build release
+$ mix edeliver build release
 ```
 
 9. Deploy using edeliver:
 
 ```bash
-mix edeliver deploy release to production
+$ mix edeliver deploy release to production --version=VERSION_FROM_RELEASE_OUTPUT --start-deploy
 ```
