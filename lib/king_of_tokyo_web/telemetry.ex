@@ -36,8 +36,8 @@ defmodule KingOfTokyoWeb.Telemetry do
       summary("vm.total_run_queue_lengths.io"),
 
       # Game Metrics
-      summary("king_of_tokyo.active_players.total"),
-      summary("king_of_tokyo.active_games.total")
+      last_value("king_of_tokyo.active_players.total"),
+      last_value("king_of_tokyo.active_games.total")
     ]
   end
 
