@@ -18,3 +18,13 @@
         dest: "/home/{{ username }}/app_config/prod.secret.exs"
         owner: "{{ username }}"
         group: "{{ username }}"
+
+    - name: Create Systemd Init Script
+      template:
+        src: "{{ app_name }}.service"
+        dest: "/etc/systemd/system/{{ app_name }}.service"
+
+    - name: Enable Systemd service for application
+      systemd:
+        name: "{{ app_name }}"
+        enabled: yes

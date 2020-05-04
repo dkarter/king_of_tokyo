@@ -13,7 +13,6 @@
       # for reverse proxy and easy let's encrypt setup
       - nginx
 
-  gather_facts: no
   remote_user: root
 
   tasks:
@@ -71,3 +70,11 @@
 
     - name: Install Hex
       command: mix local.hex --force
+
+  roles:
+    - role: jnv.unattended-upgrades
+      unattended_origins_patterns:
+      - 'origin=Ubuntu,archive=${distro_codename}-security'
+      unattended_automatic_reboot: true
+      unattended_automatic_reboot_time: '09:00'
+      unattended_mail: "{{ secret_certbot_admin_email }}"
