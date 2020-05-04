@@ -1,0 +1,18 @@
+# vi: ft=systemd
+
+[Unit]
+Description={{ app_name }}
+After=network.target
+
+[Service]
+User={{ username }}
+Restart=on-failure
+
+Type=forking
+Environment=MIX_ENV=prod
+# EnvironmentFile=/home/deploy/example_phoenix.env # For environment variables like REPLACE_OS_VARS=true
+ExecStart= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo start
+ExecStop= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo stop
+
+[Install]
+WantedBy=multi-user.target
