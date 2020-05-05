@@ -10,7 +10,7 @@ Restart=on-failure
 
 Type=forking
 Environment=MIX_ENV=prod
-# EnvironmentFile=/home/deploy/example_phoenix.env # For environment variables like REPLACE_OS_VARS=true
+EnvironmentFile= "/home/{{ username }}/{{ app_name }}.env"
 ExecStart= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo start
 ExecStop= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo stop
 
