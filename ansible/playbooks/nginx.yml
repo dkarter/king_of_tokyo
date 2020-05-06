@@ -1,7 +1,6 @@
 ---
 - hosts: application
 
-  gather_facts: no
   remote_user: root
 
   tasks:
@@ -27,21 +26,21 @@
 
     - name: Nginx SSL Shared Settings Module
       template:
-        src: shared_ssl_settings
-        dest: /etc/nginx/modules/shared_ssl_settings
+        src: "{{ app_name }}_shared_ssl_settings"
+        dest: /etc/nginx/modules/{{ app_name }}_shared_ssl_settings
 
     - name: Configure nginx for the app
       template:
-        src: "theking.nginx"
-        dest: "/etc/nginx/sites-available/theking"
+        src: "{{ app_name }}.nginx"
+        dest: "/etc/nginx/sites-available/{{ app_name }}"
         group: "{{ username }}"
         owner: "{{ username }}"
         force: yes
 
     - name: Enable the app
       file:
-        src: "/etc/nginx/sites-available/theking"
-        dest: "/etc/nginx/sites-enabled/theking"
+        src: "/etc/nginx/sites-available/{{ app_name }}"
+        dest: "/etc/nginx/sites-enabled/{{ app_name }}"
         state: link
         owner: "{{ username }}"
         group: "{{ username }}"

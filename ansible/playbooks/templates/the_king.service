@@ -11,8 +11,8 @@ Restart=on-failure
 Type=forking
 Environment=MIX_ENV=prod
 EnvironmentFile= "/home/{{ username }}/{{ app_name }}.env"
-ExecStart= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo start
-ExecStop= /home/deploy/app_release/king_of_tokyo/bin/king_of_tokyo stop
+ExecStart= /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} start
+ExecStop= /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} stop
 
 [Install]
 WantedBy=multi-user.target

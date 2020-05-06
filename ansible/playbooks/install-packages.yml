@@ -70,6 +70,8 @@
 
     - name: Install Hex
       command: mix local.hex --force
+      changed_when: >
+        "Will always run, don't show that it changed" == 1
 
   roles:
     - role: jnv.unattended-upgrades
@@ -77,4 +79,4 @@
       - 'origin=Ubuntu,archive=${distro_codename}-security'
       unattended_automatic_reboot: true
       unattended_automatic_reboot_time: '09:00'
-      unattended_mail: "{{ secret_certbot_admin_email }}"
+      unattended_mail: "{{ admin_email }}"

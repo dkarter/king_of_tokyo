@@ -1,7 +1,21 @@
 ---
 - hosts: application
+  vars:
+    - certbot_auto_renew: true
+    - certbot_auto_renew_user: "root"
+    - certbot_auto_renew_hour: "3"
+    - certbot_auto_renew_minute: "30"
+    - certbot_auto_renew_options: "--quiet --no-self-upgrade"
+    - certbot_create_if_missing: true
+    - certbot_admin_email: "{{ admin_email }}"
+    - certbot_create_method: standalone
+    - certbot_create_standalone_stop_services:
+      - nginx
+    - certbot_certs:
+      - domains:
+          - "{{ domain }}"
+          - "www.{{ domain }}"
 
-  gather_facts: no
   remote_user: root
 
   roles:
