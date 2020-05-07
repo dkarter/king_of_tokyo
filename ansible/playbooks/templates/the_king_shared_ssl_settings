@@ -2,6 +2,9 @@
 listen 443 ssl http2;
 listen [::]:443;
 
+ssl_certificate           /etc/letsencrypt/live/{{domain}}/fullchain.pem;
+ssl_certificate_key       /etc/letsencrypt/live/{{domain}}/privkey.pem;
+
 # TLS
 ssl on;
 ssl_session_cache         shared:SSL:20m;

@@ -1,10 +1,24 @@
 ---
 - hosts: application
 
-  gather_facts: no
   remote_user: root
 
   tasks:
+    - name: Create .env file
+      template:
+        src: "{{ app_name }}.env"
+        dest: "/home/{{ username }}/{{ app_name }}.env"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
+    - name: Source .env file in user profile
+      lineinfile:
+        dest: '/home/{{ username }}/.profile'
+        regexp: '^\. "$HOME/{{ app_name }}.env"'
+        line: '. "$HOME/{{ app_name }}.env"'
+        state: present
+        backup: yes
+
     - name: Ensures shared/config dir exists
       file:
         path: "/home/{{ username }}/app_config"

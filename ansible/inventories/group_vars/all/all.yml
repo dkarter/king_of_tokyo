@@ -1,4 +1,6 @@
 ---
 username: deploy
 app_name: the_king
+project_name: king_of_tokyo
 domain: theking.live
+admin_email: "{{ secret_admin_email }}"

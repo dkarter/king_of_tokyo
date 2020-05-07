@@ -1,7 +1,6 @@
 ---
 - hosts: application
 
-  gather_facts: no
   remote_user: root
 
 - name: Configure Machine Login
@@ -10,14 +9,11 @@
 - name: Install Packages
   import_playbook: playbooks/install-packages.yml
 
-- name: Set Environment Variables
-  import_playbook: playbooks/set-environment-variables.yml
-
-- name: Setup Nginx
-  import_playbook: playbooks/nginx.yml
-
 - name: Application Deployment Setup
   import_playbook: playbooks/application-deployment-setup.yml
 
 - name: Let's Encrypt SSL Setup
   import_playbook: playbooks/lets-encrypt.yml
+
+- name: Setup Nginx
+  import_playbook: playbooks/nginx.yml

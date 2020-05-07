@@ -16,10 +16,9 @@ server {
 
 server {
   server_name www.{{domain}};
-  ssl_certificate           /etc/letsencrypt/live/{{domain}}/fullchain.pem;
-  ssl_certificate_key       /etc/letsencrypt/live/{{domain}}/privkey.pem;
 
-  include modules/shared_ssl_settings;
+  include modules/{{ app_name }}_shared_ssl_settings;
+
   return 301 https://{{domain}}$request_uri;
 }
 
@@ -27,14 +26,7 @@ server {
   server_name {{domain}} www.{{domain}};
   root /home/{{username}}/app_release/static;
 
-  ssl_certificate           /etc/letsencrypt/live/{{domain}}/fullchain.pem;
-  ssl_certificate_key       /etc/letsencrypt/live/{{domain}}/privkey.pem;
-
-  include modules/shared_ssl_settings;
-
-  location /.well-known {
-    try_files $uri.html $uri $uri/ /index.html;
-  }
+  include modules/{{ app_name }}_shared_ssl_settings;
 
   location / {
     proxy_pass       http://{{app_name}};

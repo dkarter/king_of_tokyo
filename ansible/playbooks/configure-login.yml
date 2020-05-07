@@ -2,7 +2,6 @@
 - hosts: application
 
   remote_user: root
-  gather_facts: no
 
   tasks:
     - name: Create Deploy User
