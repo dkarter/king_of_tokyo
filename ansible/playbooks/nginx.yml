@@ -8,26 +8,31 @@
       file:
         path: /etc/nginx/sites-available/default
         state: absent
+      notify: restart nginx
 
     - name: Remove the default nginx app's symlink if it exists
       file:
         path: /etc/nginx/sites-enabled/default
         state: absent
+      notify: restart nginx
 
     - name: Copy nginx.conf
       template:
         src: nginx.conf
         dest: /etc/nginx/nginx.conf
+      notify: restart nginx
 
     - name: Ensure Nginx Modules dir exists
       file:
         path: /etc/nginx/modules
         state: directory
+      notify: restart nginx
 
     - name: Nginx SSL Shared Settings Module
       template:
         src: "{{ app_name }}_shared_ssl_settings"
         dest: /etc/nginx/modules/{{ app_name }}_shared_ssl_settings
+      notify: restart nginx
 
     - name: Configure nginx for the app
       template:
@@ -36,6 +41,7 @@
         group: "{{ username }}"
         owner: "{{ username }}"
         force: yes
+      notify: restart nginx
 
     - name: Enable the app
       file:
@@ -44,10 +50,10 @@
         state: link
         owner: "{{ username }}"
         group: "{{ username }}"
+      notify: restart nginx
 
-    - name: Restart nginx
-      service:
-        name: nginx
-        state: restarted
-      changed_when: >
-        "Will always run, don't show that it changed" == 1
+  handlers:
+  - name: restart nginx
+    service:
+      name: nginx
+      state: restarted
