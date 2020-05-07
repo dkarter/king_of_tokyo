@@ -69,7 +69,7 @@
       when: erlang_check_deb.rc == 1
 
     - name: Install Hex
-      command: mix local.hex --force
+      command: mix local.hex --if-missing
       changed_when: >
         "Will always run, don't show that it changed" == 1
 
