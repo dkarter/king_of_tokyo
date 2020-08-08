@@ -52,7 +52,7 @@ defmodule KingOfTokyo.MixProject do
       {:phoenix_live_reload, "~> 1.2.1", only: :dev},
       {:phoenix_live_view, "~> 0.12"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:plug_cowboy, "~> 2.1"},
+      {:plug_cowboy, "~> 2.3"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"}
     ]
