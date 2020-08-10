@@ -5,6 +5,7 @@ defmodule KingOfTokyo.GameServer do
 
   use GenServer
 
+  alias KingOfTokyo.ChatMessage
   alias KingOfTokyo.Dice
   alias KingOfTokyo.Game
   alias KingOfTokyo.GameCode
@@ -12,6 +13,13 @@ defmodule KingOfTokyo.GameServer do
 
   require Logger
 
+  @spec add_chat_message(String.t(), ChatMessage.t()) :: :ok
+  def add_chat_message(game_id, message) do
+    cast_by_name(game_id, {:add_chat_message, message})
+  end
+
+  @spec add_player(String.t(), Player.t()) ::
+          :ok | {:error, :game_not_found | :name_taken | :character_taken}
   def add_player(game_id, player) do
     with :ok <- call_by_name(game_id, {:add_player, player}) do
       broadcast_players_updated!(game_id)
@@ -25,6 +33,8 @@ defmodule KingOfTokyo.GameServer do
     call_by_name(game_id, {:get_player_by_id, player_id})
   end
 
+  @spec update_player(String.t(), Player.t()) ::
+          :ok | {:error, :game_not_found | :player_not_found}
   def update_player(game_id, player) do
     with :ok <- call_by_name(game_id, {:update_player, player}) do
       broadcast_players_updated!(game_id)
@@ -129,6 +139,13 @@ defmodule KingOfTokyo.GameServer do
   def init(%GameCode{} = code) do
     Logger.info("Creating game server for #{code.game_code} (#{code.game_id})")
     {:ok, %{game: Game.new(code)}}
+  end
+
+  @impl GenServer
+  def handle_cast({:add_chat_message, message}, state) do
+    %{chat_messages: messages} = game = Game.add_chat_message(state.game, message)
+    broadcast_chat_updated!(game.code.game_id, messages)
+    {:noreply, %{state | game: game}}
   end
 
   @impl GenServer
@@ -244,6 +261,20 @@ defmodule KingOfTokyo.GameServer do
       nil ->
         {:error, :game_not_found}
     end
+  end
+
+  defp cast_by_name(game_id, command) do
+    case game_pid(game_id) do
+      game_pid when is_pid(game_pid) ->
+        GenServer.cast(game_pid, command)
+
+      nil ->
+        {:error, :game_not_found}
+    end
+  end
+
+  defp broadcast_chat_updated!(game_id, messages) do
+    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "chat_updated", %{messages: messages})
   end
 
   defp broadcast_dice_updated!(game_id, dice_state) do
