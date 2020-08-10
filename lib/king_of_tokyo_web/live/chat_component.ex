@@ -19,7 +19,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
     ~L"""
     <div class="chat-container">
-      <div class="history">
+      <div id="chat-history" class="history" phx-hook="ChatHistory">
         <%= for message <- messages do %>
           <%= render_message(assigns, message) %>
         <% end %>
