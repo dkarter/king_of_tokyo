@@ -163,9 +163,9 @@ defmodule KingOfTokyoWeb.GameLive do
       <div class="main-panel">
         <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player, in_tokyo: in_tokyo?(@player.id, assigns)) %>
         <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @game.dice_state) %>
-        <%= live_component(@socket, ChatComponent, id: :chat, messages: @game.chat_messages, current_player: @player, players: @game.players) %>
       </div>
       <%= live_component(@socket, PlayerListComponent, players: @game.players, tokyo_city_player_id: @game.tokyo_city_player_id, tokyo_bay_player_id: @game.tokyo_bay_player_id) %>
+      <%= live_component(@socket, ChatComponent, id: :chat, messages: @game.chat_messages, current_player: @player, players: @game.players) %>
     </div>
     """
   end

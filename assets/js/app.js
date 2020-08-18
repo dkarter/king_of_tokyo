@@ -34,6 +34,11 @@ const Hooks = {
       this.el.scrollTop = this.el.scrollHeight;
     },
   },
+  ChatFormTextArea: {
+    updated() {
+      this.el.value = this.el.dataset.pendingVal;
+    },
+  },
 };
 
 let liveSocket = new LiveSocket('/live', Socket, {
