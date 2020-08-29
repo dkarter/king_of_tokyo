@@ -64,7 +64,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
           <% end %>
         </div>
         <form id="<%= form_id %>" action="#" phx-change="message-form-updated" phx-submit="send-message" phx-target="#<%= form_id %>">
-          <textarea id="chat-form-textarea" placeholder="Start typing..." name="body" data-pending-val="<%= @body %>" phx-hook="ChatFormTextArea" phx-keyup="textarea-keypress" phx-target="#<%= @id %>"><%= @body %></textarea>
+          <textarea id="chat-form-textarea" placeholder="Start typing..." name="body" data-pending-val="<%= @body %>" phx-hook="ChatFormTextArea" phx-keyup="textarea-keypress" phx-target="#<%= @id %>"></textarea>
           <button type="submit"><img src="/images/send.svg" /></button>
         </form>
       </div>
