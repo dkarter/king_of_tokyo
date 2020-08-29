@@ -174,6 +174,26 @@ defmodule KingOfTokyo.GameServerTest do
     end
   end
 
+  describe "send_chat_message/2" do
+    test "adds the message to the list of messages", %{game_id: game_id} do
+      message1 =
+        KingOfTokyo.ChatMessage.new(
+          "You're crushing Tokyo dude!",
+          Player.new("Jenna", :giga_zaur)
+        )
+
+      message2 =
+        KingOfTokyo.ChatMessage.new(
+          "Going for the attack!",
+          Player.new("Jay", :kraken)
+        )
+
+      assert :ok = GameServer.add_chat_message(game_id, message1)
+      assert :ok = GameServer.add_chat_message(game_id, message2)
+      assert {:ok, %Game{chat_messages: [message2, message1]}} = GameServer.get_game(game_id)
+    end
+  end
+
   describe "get_player_by_id/2" do
     test "returns the player if found", %{game_id: game_id} do
       %{id: player_id} = player = Player.new("Jane", :the_king)

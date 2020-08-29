@@ -4,21 +4,22 @@ defmodule KingOfTokyo.Game do
   it
   """
 
+  alias KingOfTokyo.ChatMessage
   alias KingOfTokyo.Dice
   alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player
 
-  defstruct code: nil,
+  defstruct chat_messages: [],
+            code: nil,
             dice_state: %Dice{},
-            game_id: nil,
             players: [],
             tokyo_bay_player_id: nil,
             tokyo_city_player_id: nil
 
   @type t :: %__MODULE__{
+          chat_messages: list(ChatMessage.t()),
           code: GameCode.t(),
           dice_state: Dice.t(),
-          game_id: String.t() | nil,
           players: list(Player.t()),
           tokyo_bay_player_id: String.t() | nil,
           tokyo_city_player_id: String.t() | nil
@@ -154,6 +155,11 @@ defmodule KingOfTokyo.Game do
 
   def leave_tokyo(game, _player_id) do
     game
+  end
+
+  @spec add_chat_message(t(), ChatMessage.t()) :: t()
+  def add_chat_message(game, chat_message) do
+    %{game | chat_messages: [chat_message | game.chat_messages]}
   end
 
   defp find_player(game, %{} = attrs, match: :any) do

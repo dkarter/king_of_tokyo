@@ -7,16 +7,16 @@
 .button-danger {
   background-color: #a94442;
   border-color: #a94442;
-}
 
-.button-danger.button-clear,
-.button-danger.button-outline {
-  background-color: transparent;
-  color: #a94442;
-}
+  &.button-clear,
+  &.button-outline {
+    background-color: transparent;
+    color: #a94442;
+  }
 
-.button-danger.button-clear {
-  border-color: transparent;
+  &.button-clear {
+    border-color: transparent;
+  }
 }
 
 .logo img {
@@ -48,6 +48,132 @@ main.container {
 
     &:not(:last-child) {
       margin-bottom: 1rem;
+    }
+  }
+}
+
+button.chat-button {
+  align-items: center;
+  border-radius: 50%;
+  bottom: 0;
+  display: flex;
+  height: 5rem;
+  justify-content: center;
+  position: fixed;
+  right: 2rem;
+  width: 5rem;
+  padding: 0;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 5px 10px;
+
+  img {
+    width: 4rem;
+    position: fixed;
+  }
+}
+
+.chat-container {
+  border-radius: 2rem;
+  border: solid 1px lightgray;
+  bottom: 7rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 5px 40px;
+  display: none;
+  position: fixed;
+  right: 2rem;
+  width: 50rem;
+
+  &.visible {
+    display: block;
+  }
+
+  form {
+    display: flex;
+    border-top: 1px solid lightgray;
+    margin: 0;
+
+    textarea {
+      border: none;
+      resize: none;
+      margin: 0;
+      padding: 1rem 1rem 0.2rem 1rem;
+      font-family: 'Helvetica';
+    }
+
+    button {
+      align-items: center;
+      border-radius: 50%;
+      border: 1px transparent;
+      box-sizing: border-box;
+      display: flex;
+      height: 4rem;
+      justify-content: center;
+      margin-right: 1rem;
+      margin-top: 1rem;
+      width: 4rem;
+      padding: 0;
+
+      img {
+        width: 2rem;
+      }
+    }
+  }
+
+  .history {
+    background: #fff;
+    border-radius: 2rem 2rem 0 0;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 21px 4px -20px inset;
+    padding: 1rem;
+    height: 50rem;
+    overflow: scroll;
+
+    .message {
+      margin-bottom: 1rem;
+
+      &.from-me {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+
+        .body,
+        .sender {
+          background: #348cff;
+          color: #fff;
+        }
+
+        .body {
+          margin-right: 1rem;
+        }
+      }
+
+      &:not(.from-me) {
+        .body,
+        .sender {
+          background: #d8d8d8;
+          color: #000;
+        }
+
+        .body {
+          margin-left: 1rem;
+        }
+      }
+
+      .body {
+        border-radius: 2rem;
+        display: inline-block;
+        margin-bottom: 1rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .sender {
+        width: 3rem;
+        height: 3rem;
+        line-height: 3rem;
+        align-items: center;
+        border-radius: 50%;
+        display: flex;
+        font-weight: bold;
+        justify-content: center;
+        padding-top: 0.25rem;
+      }
     }
   }
 }

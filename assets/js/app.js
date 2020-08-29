@@ -28,7 +28,21 @@ let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
 
+const Hooks = {
+  ChatHistory: {
+    updated() {
+      this.el.scrollTop = this.el.scrollHeight;
+    },
+  },
+  ChatFormTextArea: {
+    updated() {
+      this.el.value = this.el.dataset.pendingVal;
+    },
+  },
+};
+
 let liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },
+  hooks: Hooks,
 });
 liveSocket.connect();

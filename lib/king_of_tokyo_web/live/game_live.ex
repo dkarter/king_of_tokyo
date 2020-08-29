@@ -6,14 +6,20 @@ defmodule KingOfTokyoWeb.GameLive do
   use KingOfTokyoWeb, :live_view
 
   alias KingOfTokyo.GameServer
+  alias KingOfTokyoWeb.ChatComponent
   alias KingOfTokyoWeb.DiceRollerComponent
   alias KingOfTokyoWeb.LobbyLive
   alias KingOfTokyoWeb.PlayerCardComponent
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
-  alias KingOfTokyoWeb.Router.Helpers, as: Routes
 
-  # alias KingOfTokyoWeb.Router.Helpers, as: Routes
+  def handle_info(%{event: "chat_updated", payload: %{messages: messages}}, socket) do
+    game =
+      socket.assigns.game
+      |> Map.put(:chat_messages, messages)
+
+    {:noreply, assign(socket, game: game)}
+  end
 
   def handle_info(%{event: "tokyo_updated", payload: tokyo_state}, socket) do
     %{game: game} = socket.assigns
@@ -68,6 +74,14 @@ defmodule KingOfTokyoWeb.GameLive do
       else
         GameServer.enter_tokyo(game_id, player.id)
       end
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:send_message, body}, socket) do
+    game_id = game_id(socket)
+    message = KingOfTokyo.ChatMessage.new(body, socket.assigns.player.id)
+    :ok = GameServer.add_chat_message(game_id, message)
 
     {:noreply, socket}
   end
@@ -151,6 +165,7 @@ defmodule KingOfTokyoWeb.GameLive do
         <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @game.dice_state) %>
       </div>
       <%= live_component(@socket, PlayerListComponent, players: @game.players, tokyo_city_player_id: @game.tokyo_city_player_id, tokyo_bay_player_id: @game.tokyo_bay_player_id) %>
+      <%= live_component(@socket, ChatComponent, id: :chat, messages: @game.chat_messages, current_player: @player, players: @game.players) %>
     </div>
     """
   end

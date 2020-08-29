@@ -1,10 +1,11 @@
 defmodule KingOfTokyo.GameTest do
   use ExUnit.Case, async: true
 
+  alias KingOfTokyo.ChatMessage
   alias KingOfTokyo.Game
   alias KingOfTokyo.Player
 
-  describe ".add_player/2" do
+  describe "add_player/2" do
     test "adds a new player to the game" do
       game = Game.new()
 
@@ -32,7 +33,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".update_player/2" do
+  describe "update_player/2" do
     test "updates a player from the game" do
       game = Game.new()
       player = Player.new("Joe", :the_king)
@@ -49,7 +50,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".remove_player/2" do
+  describe "remove_player/2" do
     test "removes a player from the game" do
       game = Game.new()
       player1 = Player.new("Joe", :the_king)
@@ -69,7 +70,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".enter_tokyo/2 with less than 4 players" do
+  describe "enter_tokyo/2 with less than 4 players" do
     test "marks player is in Tokyo City if no one is in Tokyo City" do
       game = game_with_players(2)
 
@@ -84,7 +85,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".enter_tokyo/2 with more than 4 players" do
+  describe "enter_tokyo/2 with more than 4 players" do
     test "marks player is in Tokyo Bay if Tokyo City is occupied and more than 4 players in game" do
       game = game_with_players(5)
       game = Game.enter_tokyo(game, "p1")
@@ -103,7 +104,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".leave_tokyo/2 with less than 4 players" do
+  describe "leave_tokyo/2 with less than 4 players" do
     test "removes the player from Tokyo City" do
       game = game_with_players(2)
       game = Game.enter_tokyo(game, "p1")
@@ -119,7 +120,7 @@ defmodule KingOfTokyo.GameTest do
     end
   end
 
-  describe ".leave_tokyo/2 with more than 4 players" do
+  describe "leave_tokyo/2 with more than 4 players" do
     test "removes the player from Tokyo Bay" do
       game = game_with_players(5)
       game = Game.enter_tokyo(game, "p2")
@@ -145,6 +146,16 @@ defmodule KingOfTokyo.GameTest do
 
       assert %{tokyo_city_player_id: "p2", tokyo_bay_player_id: "p4"} =
                Game.leave_tokyo(game, "p5")
+    end
+  end
+
+  describe "add_chat_message/3" do
+    test "adds the new chat message to the game struct" do
+      %{id: player_id} = player = Player.new("Joe", :the_king)
+      {:ok, game} = Game.add_player(Game.new(), player)
+      message = ChatMessage.new("Hi everyone!", player_id)
+
+      assert %Game{chat_messages: [^message]} = Game.add_chat_message(game, message)
     end
   end
 
