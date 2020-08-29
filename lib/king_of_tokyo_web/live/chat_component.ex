@@ -48,7 +48,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
   @impl true
   def render(assigns) do
     form_id = "chat-message-form-#{assigns.id}"
-    messages = Enum.reverse(assigns.messages)
+    messages = assigns.messages |> Enum.reverse() |> Enum.with_index()
 
     visible_class = if assigns[:open], do: "visible"
 
@@ -59,8 +59,8 @@ defmodule KingOfTokyoWeb.ChatComponent do
       </button>
       <div class="chat-container <%= visible_class %>">
         <div id="chat-history" class="history" phx-hook="ChatHistory" phx-update="append">
-          <%= for message <- messages do %>
-            <%= render_message(assigns, message) %>
+          <%= for {message, index} <- messages do %>
+            <%= render_message(assigns, message, index) %>
           <% end %>
         </div>
         <form id="<%= form_id %>" action="#" phx-change="message-form-updated" phx-submit="send-message" phx-target="#<%= form_id %>">
@@ -72,7 +72,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
     """
   end
 
-  defp render_message(assigns, message) do
+  defp render_message(assigns, message, index) do
     from_me = message.player_id == assigns.current_player.id
 
     sender_initials =
@@ -86,7 +86,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
       |> String.split("\n")
 
     ~L"""
-    <div class="message <%= if from_me, do: "from-me" %>">
+    <div id="chat-msg-<%= index %>" class="message <%= if from_me, do: "from-me" %>">
       <div class="body">
         <%= for line <- body_lines do %>
           <%= line %>
