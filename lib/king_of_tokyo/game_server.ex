@@ -253,6 +253,11 @@ defmodule KingOfTokyo.GameServer do
     {:reply, {:ok, dice_state}, %{state | game: game}}
   end
 
+  @spec broadcast!(String.t(), atom(), map()) :: :ok
+  def broadcast!(game_id, event, payload \\ %{}) do
+    Phoenix.PubSub.broadcast!(KingOfTokyo.PubSub, game_id, %{event: event, payload: payload})
+  end
+
   defp call_by_name(game_id, command) do
     case game_pid(game_id) do
       game_pid when is_pid(game_pid) ->
@@ -274,19 +279,19 @@ defmodule KingOfTokyo.GameServer do
   end
 
   defp broadcast_chat_updated!(game_id, messages) do
-    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "chat_updated", %{messages: messages})
+    broadcast!(game_id, :chat_updated, %{messages: messages})
   end
 
   defp broadcast_dice_updated!(game_id, dice_state) do
-    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "dice_updated", dice_state)
+    broadcast!(game_id, :dice_updated, dice_state)
   end
 
   defp broadcast_players_updated!(game_id) do
-    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "players_updated", %{})
+    broadcast!(game_id, :players_updated)
   end
 
   defp broadcast_tokyo_updated!(game_id, tokyo_state) do
-    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "tokyo_updated", tokyo_state)
+    broadcast!(game_id, :tokyo_updated, tokyo_state)
   end
 
   @spec via_tuple(String.t()) :: {:via, atom(), {atom(), String.t()}}

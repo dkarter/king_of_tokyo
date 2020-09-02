@@ -13,7 +13,7 @@ defmodule KingOfTokyoWeb.GameLive do
   alias KingOfTokyoWeb.PlayerListComponent
   alias KingOfTokyoWeb.Presence
 
-  def handle_info(%{event: "chat_updated", payload: %{messages: messages}}, socket) do
+  def handle_info(%{event: :chat_updated, payload: %{messages: messages}}, socket) do
     game =
       socket.assigns.game
       |> Map.put(:chat_messages, messages)
@@ -21,7 +21,7 @@ defmodule KingOfTokyoWeb.GameLive do
     {:noreply, assign(socket, game: game)}
   end
 
-  def handle_info(%{event: "tokyo_updated", payload: tokyo_state}, socket) do
+  def handle_info(%{event: :tokyo_updated, payload: tokyo_state}, socket) do
     %{game: game} = socket.assigns
 
     {:noreply,
@@ -34,12 +34,12 @@ defmodule KingOfTokyoWeb.GameLive do
      )}
   end
 
-  def handle_info(%{event: "dice_updated", payload: dice_state}, socket) do
+  def handle_info(%{event: :dice_updated, payload: dice_state}, socket) do
     %{game: game} = socket.assigns
     {:noreply, assign(socket, game: %{game | dice_state: dice_state})}
   end
 
-  def handle_info(%{event: "players_updated", payload: _}, socket) do
+  def handle_info(%{event: :players_updated, payload: _}, socket) do
     %{game: game} = socket.assigns
     game_id = game_id(socket)
 
@@ -54,7 +54,7 @@ defmodule KingOfTokyoWeb.GameLive do
   def handle_info(%{event: "presence_diff", payload: _}, socket) do
     game_id = game_id(socket)
 
-    KingOfTokyoWeb.Endpoint.broadcast!(game_id, "players_updated", %{})
+    GameServer.broadcast!(game_id, :players_updated)
 
     {:noreply, socket}
   end
