@@ -4,6 +4,10 @@
 
 @import '../node_modules/nprogress/nprogress.css';
 
+$breakpoint-tablet: 414px;
+$card-shadow: 0 0 3px -1px rgba(0, 0, 0, 0.3);
+$component-background: rgba(255, 255, 255, 0.8);
+
 body {
   background: url('/images/tile.png');
 }
@@ -18,13 +22,9 @@ input[type='number'] {
   background: white;
 }
 
+/* prettier-ignore */
 select {
-  background: url('data:image/svg+xml;utf8,<svg
-  xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14"
-  width="29"><path fill="%23d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036
-  3.625"/></svg>')
-      no-repeat center right,
-    white;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14" width="29"><path fill="%23d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036 3.625"/></svg>') no-repeat center right, white;
 }
 
 .button-danger {
@@ -57,9 +57,10 @@ select {
   padding: 1rem;
 
   .player {
-    background: url('/images/player-card.svg'), white no-repeat;
+    background: url('/images/player-card.svg'), $component-background no-repeat;
     background-position: 0.8rem;
     border-radius: 1.5rem;
+    box-shadow: $card-shadow;
     padding: 1rem;
     width: 28rem;
     height: 20rem;
@@ -244,7 +245,6 @@ button.chat-button {
   }
 
   .generate-code-container button {
-    $breakpoint-tablet: 414px;
     @media (min-width: $breakpoint-tablet) {
       margin-top: 2.5rem;
     }
@@ -260,6 +260,12 @@ button.chat-button {
 }
 
 .player-card {
+  background: $component-background;
+  border-radius: 2rem;
+  box-shadow: $card-shadow;
+  padding: 2.3rem;
+  margin: 0.8rem 0 2rem 0;
+
   form {
     min-width: 65rem;
   }
@@ -300,6 +306,11 @@ button.chat-button {
 }
 
 .dice-roll {
+  background: $component-background;
+  border-radius: 2rem;
+  box-shadow: $card-shadow;
+  padding: 2rem;
+
   form {
     align-items: center;
     display: flex;
