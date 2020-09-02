@@ -26,6 +26,7 @@ defmodule KingOfTokyo.Player do
 
   @max_points 20
   @max_health 12
+  @max_energy 99
 
   @type character_type ::
           :the_king
@@ -98,6 +99,10 @@ defmodule KingOfTokyo.Player do
 
   def set_energy(%__MODULE__{} = player, energy) when is_binary(energy) do
     set_energy(player, String.to_integer(energy))
+  end
+
+  def set_energy(%__MODULE__{} = player, energy) when energy > @max_energy do
+    set_energy(player, @max_energy)
   end
 
   def set_energy(%__MODULE__{} = player, energy) when energy < 0 do
