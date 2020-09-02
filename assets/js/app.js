@@ -41,8 +41,45 @@ const Hooks = {
   },
 };
 
+const keyEventMetadata = e => {
+  return {
+    altGraphKey: e.altGraphKey,
+    altKey: e.altKey,
+    code: e.code,
+    ctrlKey: e.ctrlKey,
+    key: e.key,
+    keyIdentifier: e.keyIdentifier,
+    keyLocation: e.keyLocation,
+    location: e.location,
+    metaKey: e.metaKey,
+    repeat: e.repeat,
+    shiftKey: e.shiftKey,
+  };
+};
+
 let liveSocket = new LiveSocket('/live', Socket, {
   params: { _csrf_token: csrfToken },
   hooks: Hooks,
+  metadata: {
+    click: e => {
+      return {
+        altKey: e.altKey,
+        shiftKey: e.shiftKey,
+        ctrlKey: e.ctrlKey,
+        metaKey: e.metaKey,
+        x: e.x || e.clientX,
+        y: e.y || e.clientY,
+        pageX: e.pageX,
+        pageY: e.pageY,
+        screenX: e.screenX,
+        screenY: e.screenY,
+        offsetX: e.offsetX,
+        offsetY: e.offsetY,
+        detail: e.detail || 1,
+      };
+    },
+    keydown: keyEventMetadata,
+    keyup: keyEventMetadata,
+  },
 });
 liveSocket.connect();
