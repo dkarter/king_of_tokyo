@@ -25,6 +25,10 @@ defmodule KingOfTokyoWeb.ChatComponent do
     {:noreply, assign(socket, body: "")}
   end
 
+  def handle_event("textarea-keypress", %{"key" => "Escape"}, socket) do
+    {:noreply, assign(socket, open: false)}
+  end
+
   @impl true
   def handle_event("textarea-keypress", _event, socket) do
     {:noreply, socket}
@@ -35,13 +39,12 @@ defmodule KingOfTokyoWeb.ChatComponent do
     {:noreply, assign(socket, body: body)}
   end
 
-  def handle_event("on-blur", _, socket) do
+  def handle_event("window-keyup", %{"key" => "Escape"}, socket) do
     {:noreply, assign(socket, open: false)}
   end
 
   @impl true
   def mount(socket) do
-    IO.puts("assigning empty body to socket")
     {:ok, assign(socket, body: "")}
   end
 
@@ -53,7 +56,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
     visible_class = if assigns[:open], do: "visible"
 
     ~L"""
-    <div id="<%= @id %>" phx-target="#<%= @id %>">
+    <div id="<%= @id %>" phx-target="#<%= @id %>" phx-window-keyup="window-keyup">
       <button class="chat-button" phx-click="toggle-chat" phx-target="#<%= @id %>">
         <img src="images/chat.svg" />
       </button>
