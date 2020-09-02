@@ -74,13 +74,17 @@ defmodule KingOfTokyoWeb.LobbyComponent do
           </label>
           <%= render_character_select(assigns) %>
         </section>
-        <label>
-          Game Code:
-          <div class="game-code-field">
-            <input name="game_code" type="text" value="<%= @game_code %>"/>
-            <button type="button" phx-click="generate-code" phx-target="#<%= @id %>">Generate</button>
+        <div class="row">
+          <div class="column">
+            <label>
+              Game Code:
+              <input name="game_code" type="text" value="<%= @game_code %>"/>
+            </label>
           </div>
-        </label>
+          <div class="column generate-code-container">
+            <button type="button" class="button button-outline" phx-click="generate-code" phx-target="#<%= @id %>">Generate</button>
+          </div>
+        </div>
         <button type="submit">Join</button>
       </form>
     </div>

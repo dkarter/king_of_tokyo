@@ -37,11 +37,11 @@ defmodule KingOfTokyoWeb.PlayerCardComponent do
         <div class="row">
           <div class="column">Name: <input name="name" type="text" value="<%= @player.name %>" /></div>
         </div>
-        <div class="row">
-          <div class="column">❤️  <input name="health" type="number" min="0" max="12" value="<%= @player.health %>" /></div>
-          <div class="column">⭐️ <input name="points" type="number" min="0" max="20" value="<%= @player.points %>" /></div>
-          <div class="column">⚡️ <input name="energy" type="number" min="0" value="<%= @player.energy %>" /></div>
-          <div class="column">
+        <div class="stats">
+          <div><img src="/images/hearts.svg" class="health" /><input name="health" type="number" min="0" max="12" value="<%= @player.health %>" /></div>
+          <div><img src="/images/victory.svg" class="points" /><input name="points" type="number" min="0" max="20" value="<%= @player.points %>" /></div>
+          <div><img src="/images/lightning.svg" class="energy" /><input name="energy" type="number" min="0" max="99" value="<%= @player.energy %>" /></div>
+          <div>
             <button type="button" class="button button-outline<%= if @in_tokyo, do: " button-danger" %>" phx-click="toggle-tokyo" phx-target="#<%= form_id %>">
               <%= tokyo_button_text(assigns) %>
             </button>

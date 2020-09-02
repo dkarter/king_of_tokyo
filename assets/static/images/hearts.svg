@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="38px" height="34px" viewBox="0 0 38 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>np_heart_1801024_FFFFFF</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Player-Card" transform="translate(-110.000000, -90.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="health" transform="translate(110.000000, 81.000000)">
+                <g id="np_heart_1801024_FFFFFF" transform="translate(0.000000, 9.000000)">
+                    <path d="M10.4042813,0 C4.2049375,0 0,5.68345172 0,11.9463103 C0,22.6832759 8.34040625,27.1073793 19,34 C29.6595938,27.1073793 38,22.6832759 38,11.9463103 C38,5.68327586 33.7950625,0 27.5957188,0 C23.6064312,0 20.3270313,2.2372 19,3.57908621 C17.673325,2.2372 14.3938062,0 10.4042813,0 Z" id="Path"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
