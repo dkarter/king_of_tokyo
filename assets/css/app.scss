@@ -4,6 +4,29 @@
 
 @import '../node_modules/nprogress/nprogress.css';
 
+body {
+  background: url('/images/tile.png');
+}
+
+header {
+  background: none;
+}
+
+textarea,
+input[type='text'],
+input[type='number'] {
+  background: white;
+}
+
+select {
+  background: url('data:image/svg+xml;utf8,<svg
+  xmlns="http://www.w3.org/2000/svg" height="14" viewBox="0 0 29 14"
+  width="29"><path fill="%23d1d1d1" d="M9.37727 3.625l5.08154 6.93523L19.54036
+  3.625"/></svg>')
+      no-repeat center right,
+    white;
+}
+
 .button-danger {
   background-color: #a94442;
   border-color: #a94442;
@@ -20,31 +43,66 @@
 }
 
 .logo img {
-  width: 8rem;
+  width: 24rem;
 }
 
 .game-container {
   display: flex;
 }
 
-header .container,
-main.container {
-  max-width: 80%;
-}
-
 #player-list {
-  border: solid 1px #6a6f79;
   border-radius: 0.5rem;
   height: max-content;
   margin-left: 2rem;
   padding: 1rem;
 
   .player {
-    border: solid 1px #6a6f79;
-    border-radius: 0.5rem;
-    box-shadow: 0.15rem 0.15rem 0.2rem rgba(0, 0, 0, 0.2);
+    background: url('/images/player-card.svg'), white no-repeat;
+    background-position: 0.8rem;
+    border-radius: 1.5rem;
     padding: 1rem;
-    min-width: 20rem;
+    width: 28rem;
+    height: 20rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    color: white;
+
+    > div {
+      margin-bottom: 1rem;
+    }
+
+    .character {
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 2rem;
+    }
+
+    .stats {
+      display: flex;
+
+      > div {
+        margin-left: 2rem;
+        display: flex;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: 500;
+
+        img {
+          height: 2rem;
+          margin-right: 0.5rem;
+        }
+
+        span {
+          display: block;
+          padding-top: 0.2rem;
+        }
+      }
+    }
+
+    .tokyo-status {
+      font-weight: bold;
+    }
 
     &:not(:last-child) {
       margin-bottom: 1rem;
@@ -93,6 +151,7 @@ button.chat-button {
 
     textarea {
       border: none;
+      border-radius: 2rem;
       resize: none;
       margin: 0;
       padding: 1rem 1rem 0.2rem 1rem;
@@ -184,11 +243,10 @@ button.chat-button {
     max-width: 40rem;
   }
 
-  .game-code-field {
-    display: flex;
-
-    button {
-      margin-left: 1rem;
+  .generate-code-container button {
+    $breakpoint-tablet: 414px;
+    @media (min-width: $breakpoint-tablet) {
+      margin-top: 2.5rem;
     }
   }
 
@@ -208,6 +266,36 @@ button.chat-button {
 
   input[type='number'] {
     max-width: 5rem;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+
+    > div {
+      align-items: center;
+      display: flex;
+    }
+
+    img {
+      margin-right: 0.8rem;
+      margin-top: -1.25rem;
+    }
+
+    img.points {
+      filter: invert(22%) sepia(100%) saturate(763%) hue-rotate(358deg)
+        brightness(92%) contrast(88%);
+    }
+
+    img.health {
+      filter: invert(39%) sepia(83%) saturate(413%) hue-rotate(314deg)
+        brightness(96%) contrast(87%);
+    }
+
+    img.energy {
+      filter: invert(68%) sepia(66%) saturate(5788%) hue-rotate(160deg)
+        brightness(93%) contrast(104%);
+    }
   }
 }
 
