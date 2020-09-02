@@ -8,7 +8,7 @@ defmodule KingOfTokyoWeb.LobbyComponent do
   alias KingOfTokyo.GameCode
   alias KingOfTokyo.Player
 
-  def handle_event("join-game", %{"code" => code}, socket) when byte_size(code) < 2 do
+  def handle_event("join-game", %{"game_code" => code}, socket) when byte_size(code) < 2 do
     send(self(), {:put_temporary_flash, :error, "code must be at least 2 characters long"})
     {:noreply, socket}
   end
@@ -65,8 +65,8 @@ defmodule KingOfTokyoWeb.LobbyComponent do
 
   def render(assigns) do
     ~L"""
-    <div class="lobby-container">
-      <form id="<%= @id %>" phx-change="update" phx-submit="join-game" phx-target="#<%= @id %>">
+    <div id="<%= @id %>" phx-target="#<%= @id %>" class="lobby-container">
+      <form phx-change="update" phx-submit="join-game" phx-target="#<%= @id %>">
         <section class="player-details">
           <label>
             Player Name:
