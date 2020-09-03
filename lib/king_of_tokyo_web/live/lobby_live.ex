@@ -57,7 +57,7 @@ defmodule KingOfTokyoWeb.LobbyLive do
 
   def render(assigns) do
     ~L"""
-    <%= live_component(@socket, LobbyComponent, id: :lobby, game_code: @game_code) %>
+    <%= live_component(@socket, LobbyComponent, id: "lobby", game_code: @game_code) %>
     """
   end
 
