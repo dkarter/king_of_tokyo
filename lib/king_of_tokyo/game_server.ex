@@ -294,7 +294,7 @@ defmodule KingOfTokyo.GameServer do
     broadcast!(game_id, :tokyo_updated, tokyo_state)
   end
 
-  @spec via_tuple(String.t()) :: {:via, atom(), {atom(), String.t()}}
+  @spec via_tuple(String.t()) :: {:via, Registry, {KingOfTokyo.GameRegistry, String.t()}}
   defp via_tuple(game_id) do
     {:via, Registry, {KingOfTokyo.GameRegistry, game_id}}
   end
