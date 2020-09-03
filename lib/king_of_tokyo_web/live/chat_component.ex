@@ -30,7 +30,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
   end
 
   @impl true
-  def handle_event("textarea-keypress", _event, socket) do
+  def handle_event("textarea-keypress", _, socket) do
     {:noreply, socket}
   end
 
@@ -41,6 +41,10 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
   def handle_event("window-keyup", %{"key" => "Escape"}, socket) do
     {:noreply, assign(socket, open: false)}
+  end
+
+  def handle_event("window-keyup", _, socket) do
+    {:noreply, socket}
   end
 
   @impl true
