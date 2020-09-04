@@ -14,8 +14,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
   @impl true
   def handle_event("toggle-chat", _, socket) do
-    socket = assign(socket, open: !socket.assigns[:open])
-    {:noreply, socket}
+    {:noreply, assign(socket, open: !socket.assigns[:open])}
   end
 
   @doc """
@@ -61,9 +60,15 @@ defmodule KingOfTokyoWeb.ChatComponent do
   end
 
   @impl true
-  def handle_event("window-keyup", _, socket) do
-    {:noreply, socket}
+  def handle_event("window-keyup", _event, socket), do: {:noreply, socket}
+
+  @impl true
+  def handle_event("window-keydown", %{"code" => "KeyC", "ctrlKey" => true}, socket) do
+    {:noreply, assign(socket, open: !socket.assigns[:open])}
   end
+
+  @impl true
+  def handle_event("window-keydown", _event, socket), do: {:noreply, socket}
 
   @impl true
   def mount(socket) do
@@ -83,6 +88,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
       phx-capture-click="dismiss-chat"
       phx-target="#<%= @id %>"
       phx-window-keyup="window-keyup"
+      phx-window-keydown="window-keydown"
     >
       <button class="chat-button" phx-click="toggle-chat" phx-target="#<%= @id %>">
         <img src="images/chat.svg" />
