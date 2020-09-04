@@ -18,6 +18,21 @@ defmodule KingOfTokyoWeb.ChatComponent do
     {:noreply, socket}
   end
 
+  @doc """
+  Dismisses chat if overlay is clicked - noop if already closed
+  """
+  @impl true
+  def handle_event("dismiss-chat", _, socket) do
+    socket =
+      if socket.assigns[:open] do
+        assign(socket, open: false)
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_event("textarea-keypress", %{"key" => "Enter", "shiftKey" => false} = e, socket) do
     send(self(), {:send_message, e["value"]})
@@ -25,6 +40,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
     {:noreply, assign(socket, body: "")}
   end
 
+  @impl true
   def handle_event("textarea-keypress", %{"key" => "Escape"}, socket) do
     {:noreply, assign(socket, open: false)}
   end
@@ -39,10 +55,12 @@ defmodule KingOfTokyoWeb.ChatComponent do
     {:noreply, assign(socket, body: body)}
   end
 
+  @impl true
   def handle_event("window-keyup", %{"key" => "Escape"}, socket) do
     {:noreply, assign(socket, open: false)}
   end
 
+  @impl true
   def handle_event("window-keyup", _, socket) do
     {:noreply, socket}
   end
@@ -60,11 +78,16 @@ defmodule KingOfTokyoWeb.ChatComponent do
     visible_class = if assigns[:open], do: "visible"
 
     ~L"""
-    <div id="<%= @id %>" phx-target="#<%= @id %>" phx-window-keyup="window-keyup">
+    <div id="<%= @id %>"
+      class="chat-container <%= visible_class %>"
+      phx-capture-click="dismiss-chat"
+      phx-target="#<%= @id %>"
+      phx-window-keyup="window-keyup"
+    >
       <button class="chat-button" phx-click="toggle-chat" phx-target="#<%= @id %>">
         <img src="images/chat.svg" />
       </button>
-      <div class="chat-container <%= visible_class %>">
+      <div class="chat-popover <%= visible_class %>">
         <div id="chat-history" class="history" phx-hook="ChatHistory" phx-update="append">
           <%= for {message, index} <- messages do %>
             <%= render_message(assigns, message, index) %>
