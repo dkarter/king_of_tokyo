@@ -146,14 +146,9 @@ select {
     border: solid 1px lightgray;
     bottom: 7rem;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 5px 40px;
-    display: none;
     position: fixed;
     right: 2rem;
     width: 50rem;
-
-    &.visible {
-      display: block;
-    }
 
     form {
       display: flex;

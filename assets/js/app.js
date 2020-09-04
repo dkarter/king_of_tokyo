@@ -30,11 +30,17 @@ let csrfToken = document
 
 const Hooks = {
   ChatHistory: {
+    mounted() {
+      this.el.scrollTop = this.el.scrollHeight;
+    },
     updated() {
       this.el.scrollTop = this.el.scrollHeight;
     },
   },
   ChatFormTextArea: {
+    mounted() {
+      this.el.focus();
+    },
     updated() {
       this.el.value = this.el.dataset.pendingVal;
     },
