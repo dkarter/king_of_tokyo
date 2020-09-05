@@ -39,24 +39,26 @@ defmodule KingOfTokyoWeb.GameLive do
     {:noreply, assign(socket, game: %{game | dice_state: dice_state})}
   end
 
-  def handle_info(%{event: :players_updated, payload: _}, socket) do
+  def handle_info(%{event: :players_updated, payload: players}, socket) do
     %{game: game} = socket.assigns
-    game_id = game_id(socket)
 
-    players =
-      game_id
-      |> Presence.list()
-      |> Enum.map(fn {_k, %{player: player}} -> player end)
+    online_players =
+      socket
+      |> game_id()
+      |> online_players()
 
-    {:noreply, assign(socket, game: %{game | players: players})}
+    {:noreply, assign(socket, game: %{game | players: players, online_players: online_players})}
   end
 
   def handle_info(%{event: "presence_diff", payload: _}, socket) do
-    game_id = game_id(socket)
+    %{game: game} = socket.assigns
 
-    GameServer.broadcast!(game_id, :players_updated)
+    online_players =
+      socket
+      |> game_id()
+      |> online_players()
 
-    {:noreply, socket}
+    {:noreply, assign(socket, game: %{game | online_players: online_players})}
   end
 
   def handle_info({:put_temporary_flash, level, message}, socket) do
@@ -164,7 +166,7 @@ defmodule KingOfTokyoWeb.GameLive do
         <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player, in_tokyo: in_tokyo?(@player.id, assigns)) %>
         <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @game.dice_state) %>
       </div>
-      <%= live_component(@socket, PlayerListComponent, players: @game.players, tokyo_city_player_id: @game.tokyo_city_player_id, tokyo_bay_player_id: @game.tokyo_bay_player_id) %>
+      <%= live_component(@socket, PlayerListComponent, players: @game.online_players, tokyo_city_player_id: @game.tokyo_city_player_id, tokyo_bay_player_id: @game.tokyo_bay_player_id) %>
       <%= live_component(@socket, ChatComponent, id: :chat, messages: @game.chat_messages, current_player: @player, players: @game.players) %>
     </div>
     """
@@ -192,6 +194,12 @@ defmodule KingOfTokyoWeb.GameLive do
       end
 
     {:ok, socket}
+  end
+
+  defp online_players(game_id) do
+    game_id
+    |> Presence.list()
+    |> Enum.map(fn {_k, %{player: player}} -> player end)
   end
 
   defp put_temporary_flash(socket, level, message) do

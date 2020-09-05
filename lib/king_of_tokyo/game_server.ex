@@ -21,8 +21,8 @@ defmodule KingOfTokyo.GameServer do
   @spec add_player(String.t(), Player.t()) ::
           :ok | {:error, :game_not_found | :name_taken | :character_taken}
   def add_player(game_id, player) do
-    with :ok <- call_by_name(game_id, {:add_player, player}) do
-      broadcast_players_updated!(game_id)
+    with {:ok, players} <- call_by_name(game_id, {:add_player, player}) do
+      broadcast_players_updated!(game_id, players)
       :telemetry.execute([:king_of_tokyo, :player_joined], %{count: 1})
     end
   end
@@ -36,14 +36,14 @@ defmodule KingOfTokyo.GameServer do
   @spec update_player(String.t(), Player.t()) ::
           :ok | {:error, :game_not_found | :player_not_found}
   def update_player(game_id, player) do
-    with :ok <- call_by_name(game_id, {:update_player, player}) do
-      broadcast_players_updated!(game_id)
+    with {:ok, players} <- call_by_name(game_id, {:update_player, player}) do
+      broadcast_players_updated!(game_id, players)
     end
   end
 
   def remove_player(game_id, player_id) do
-    with :ok <- call_by_name(game_id, {:remove_player, player_id}) do
-      broadcast_players_updated!(game_id)
+    with {:ok, players} <- call_by_name(game_id, {:remove_player, player_id}) do
+      broadcast_players_updated!(game_id, players)
     end
   end
 
@@ -152,7 +152,7 @@ defmodule KingOfTokyo.GameServer do
   def handle_call({:add_player, player}, _from, state) do
     case Game.add_player(state.game, player) do
       {:ok, game} ->
-        {:reply, :ok, %{state | game: game}}
+        {:reply, {:ok, game.players}, %{state | game: game}}
 
       {:error, :name_taken} = error ->
         {:reply, error, state}
@@ -171,7 +171,7 @@ defmodule KingOfTokyo.GameServer do
   def handle_call({:update_player, player}, _from, state) do
     case Game.update_player(state.game, player) do
       {:ok, game} ->
-        {:reply, :ok, %{state | game: game}}
+        {:reply, {:ok, game.players}, %{state | game: game}}
 
       {:error, :player_not_found} = error ->
         {:reply, error, state}
@@ -181,7 +181,7 @@ defmodule KingOfTokyo.GameServer do
   @impl GenServer
   def handle_call({:remove_player, player_id}, _from, state) do
     {:ok, game} = Game.remove_player(state.game, player_id)
-    {:reply, :ok, %{state | game: game}}
+    {:reply, {:ok, game.players}, %{state | game: game}}
   end
 
   @impl GenServer
@@ -286,8 +286,8 @@ defmodule KingOfTokyo.GameServer do
     broadcast!(game_id, :dice_updated, dice_state)
   end
 
-  defp broadcast_players_updated!(game_id) do
-    broadcast!(game_id, :players_updated)
+  defp broadcast_players_updated!(game_id, players) do
+    broadcast!(game_id, :players_updated, players)
   end
 
   defp broadcast_tokyo_updated!(game_id, tokyo_state) do
