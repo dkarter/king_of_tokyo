@@ -19,6 +19,13 @@
         state: present
         backup: yes
 
+    - name: Ensures log dir exists
+      file:
+        path: "/var/log/{{ app_name }}"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+
     - name: Ensures shared/config dir exists
       file:
         path: "/home/{{ username }}/app_config"
