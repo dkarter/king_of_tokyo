@@ -44,8 +44,14 @@
       template:
         src: "{{ app_name }}.service"
         dest: "/etc/systemd/system/{{ app_name }}.service"
+      notify:
+        - reload systemd
 
     - name: Enable Systemd service for application
       systemd:
         name: "{{ app_name }}"
         enabled: yes
+
+  handlers:
+  - name: reload systemd
+    command: systemctl daemon-reload
