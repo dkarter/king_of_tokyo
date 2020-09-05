@@ -161,7 +161,7 @@ defmodule KingOfTokyoWeb.GameLive do
 
   def render(assigns) do
     ~L"""
-    <div class="game-container">
+    <div id="GameContainer" class="game-container" phx-hook="GameContainer">
       <div class="main-panel">
         <%= live_component(@socket, PlayerCardComponent, id: :my_player_card, player: @player, in_tokyo: in_tokyo?(@player.id, assigns)) %>
         <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @game.dice_state) %>

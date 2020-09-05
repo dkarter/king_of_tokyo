@@ -3,6 +3,7 @@
 @import './phoenix.css';
 
 @import '../node_modules/nprogress/nprogress.css';
+@import '../node_modules/notyf/notyf.min.css';
 
 $breakpoint-tablet: 414px;
 $card-shadow: 0 0 3px -1px rgba(0, 0, 0, 0.3);
@@ -15,12 +16,12 @@ body {
 header {
   background: none;
   display: flex;
-  width: 60%;
+  max-width: 104rem;
+  padding: 0 2rem;
   margin: 2rem auto;
 
   &:not(.in-game) {
     max-width: 80rem;
-    padding: 0 2rem;
   }
 
   &.in-game .menu {

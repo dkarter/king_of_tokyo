@@ -1,23 +1,10 @@
-// We need to import the CSS so that webpack will load it.
-// The MiniCssExtractPlugin is used to separate it out into
-// its own CSS file.
 import '../css/app.scss';
 
-// webpack automatically bundles all modules in your
-// entry points. Those entry points can be configured
-// in "webpack.config.js".
-//
-// Import dependencies
-//
 import 'phoenix_html';
-
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
 import { Socket } from 'phoenix';
 import LiveSocket from 'phoenix_live_view';
 import Clipboard from 'clipboard';
+import { Notyf } from 'notyf';
 
 import NProgress from 'nprogress';
 
@@ -25,9 +12,17 @@ import NProgress from 'nprogress';
 window.addEventListener('phx:page-loading-start', () => NProgress.start());
 window.addEventListener('phx:page-loading-stop', () => NProgress.done());
 
+const notyf = new Notyf({
+  duration: 3000,
+  position: {
+    x: 'right',
+    y: 'top',
+  },
+});
+
 const clipboard = new Clipboard('#copy-link', {
   text: () => {
-    console.log('copy clicked');
+    notyf.success('Copied link!');
     return window.location;
   },
 });
@@ -47,6 +42,11 @@ let csrfToken = document
   .getAttribute('content');
 
 const Hooks = {
+  GameContainer: {
+    mounted() {
+      notyf.success('Joined game!');
+    },
+  },
   ChatHistory: {
     mounted() {
       this.el.scrollTop = this.el.scrollHeight;
