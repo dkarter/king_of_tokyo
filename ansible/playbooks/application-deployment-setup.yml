@@ -3,6 +3,9 @@
 
   remote_user: root
 
+  collections:
+  - jonellis.sudoers
+
   tasks:
     - name: Create .env file
       template:
@@ -51,6 +54,15 @@
       systemd:
         name: "{{ app_name }}"
         enabled: yes
+
+    - name: Allow deploy user to restart app
+      sudoers:
+        name: "allow-{{ username }}-systemctl"
+        user: "{{ username }}"
+        command:
+          - "/bin/systemctl restart {{ app_name }}"
+          - "/bin/systemctl start {{ app_name }}"
+          - "/bin/systemctl stop {{ app_name }}"
 
   handlers:
   - name: reload systemd
