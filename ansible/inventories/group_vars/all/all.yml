@@ -4,3 +4,4 @@ app_name: the_king
 project_name: king_of_tokyo
 domain: theking.live
 admin_email: "{{ secret_admin_email }}"
+timber_api_key: "{{ secret_timber_api_key }}"

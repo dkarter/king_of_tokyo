@@ -12,7 +12,9 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
   check_origin: ["//theking.live"]
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger,
+  backends: [Timber.LoggerBackends.HTTP],
+  level: :info
 
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
