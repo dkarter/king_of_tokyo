@@ -34,9 +34,12 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
   @impl true
   def handle_event("textarea-keypress", %{"key" => "Enter", "shiftKey" => false} = e, socket) do
-    send(self(), {:send_message, e["value"]})
-
-    {:noreply, assign(socket, body: "")}
+    if blank?(e["value"]) do
+      {:noreply, socket}
+    else
+      send(self(), {:send_message, e["value"]})
+      {:noreply, assign(socket, body: "")}
+    end
   end
 
   @impl true
@@ -117,7 +120,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
               phx-target="#<%= @id %>"
               autofocus="true"
             ></textarea>
-            <button type="submit"><img src="/images/send.svg" /></button>
+            <button type="submit" <%= if blank?(assigns[:body]), do: "disabled=\"disabled\"" %>><img src="/images/send.svg" /></button>
           </form>
         </div>
       <% end %>
@@ -154,6 +157,13 @@ defmodule KingOfTokyoWeb.ChatComponent do
     str
     |> String.trim()
     |> String.split("\n")
+  end
+
+  defp blank?(str) do
+    str
+    |> to_string()
+    |> String.trim()
+    |> String.length() == 0
   end
 
   # Extracts the first two initials from a player's name and upcases them
