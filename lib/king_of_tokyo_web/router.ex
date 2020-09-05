@@ -28,6 +28,7 @@ defmodule KingOfTokyoWeb.Router do
 
     live("/", LobbyLive)
     get("/join_game", GameController, :join)
+    get("/leave", GameController, :leave)
     get("/game", GameController, :index)
   end
 

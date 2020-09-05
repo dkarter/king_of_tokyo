@@ -17,12 +17,30 @@ import 'phoenix_html';
 // import socket from "./socket"
 import { Socket } from 'phoenix';
 import LiveSocket from 'phoenix_live_view';
+import Clipboard from 'clipboard';
 
 import NProgress from 'nprogress';
 
 // Show progress bar on live navigation and form submits
 window.addEventListener('phx:page-loading-start', () => NProgress.start());
 window.addEventListener('phx:page-loading-stop', () => NProgress.done());
+
+const clipboard = new Clipboard('#copy-link', {
+  text: () => {
+    console.log('copy clicked');
+    return window.location;
+  },
+});
+
+clipboard.on('success', e => {
+  console.log(e.trigger.innerHTML);
+  e.trigger.innerHTML = 'Copied!';
+  e.trigger.setAttribute('disabled', 'disabled');
+  setTimeout(() => {
+    e.trigger.innerHTML = 'Copy Link';
+    e.trigger.removeAttribute('disabled');
+  }, 1000);
+});
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -88,4 +106,5 @@ let liveSocket = new LiveSocket('/live', Socket, {
     keyup: keyEventMetadata,
   },
 });
+
 liveSocket.connect();

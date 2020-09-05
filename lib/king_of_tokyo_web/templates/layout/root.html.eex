@@ -8,11 +8,15 @@
     <%= csrf_meta_tag() %>
   </head>
   <body>
-    <header>
-      <section class="container">
+    <header class="<%= if in_game?(@conn), do: "in-game" %>">
+      <section>
         <a href="#" class="logo">
           <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" alt="King of Tokyo"/>
         </a>
+      </section>
+      <section class="menu">
+        <%= link("Leave", to: Routes.game_path(@conn, :leave), class: "button button-outline") %>
+        <a id="copy-link" href="#" class="button button-secondary">Copy Link</a>
       </section>
     </header>
     <%= @inner_content %>

@@ -14,6 +14,33 @@ body {
 
 header {
   background: none;
+  display: flex;
+  width: 60%;
+  margin: 2rem auto;
+
+  &:not(.in-game) {
+    max-width: 80rem;
+    padding: 0 2rem;
+  }
+
+  &.in-game .menu {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+
+    a {
+      display: block;
+      margin-right: 1rem;
+    }
+  }
+
+  .menu {
+    display: none;
+  }
+
+  .logo img {
+    width: 24rem;
+  }
 }
 
 textarea,
@@ -42,12 +69,9 @@ select {
   }
 }
 
-.logo img {
-  width: 24rem;
-}
-
 .game-container {
   display: flex;
+  justify-content: center;
 }
 
 #player-list {
