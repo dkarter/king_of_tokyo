@@ -1,0 +1,32 @@
+{
+ "collection_info": {
+  "namespace": "jonellis",
+  "name": "sudoers",
+  "version": "0.1.5",
+  "authors": [
+   "Jon Ellis <ellis.jp@gmail.com> (https://www.jon-ellis.co.uk)"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "sudoers"
+  ],
+  "description": "A Sudoers module to facilitate adding config to the /etc/sudoers.d/ directory.",
+  "license": [
+   "AGPL-3.0-only"
+  ],
+  "license_file": "LICENSE.md",
+  "dependencies": {},
+  "repository": "https://github.com/JonEllis/ansible-sudoers/",
+  "documentation": null,
+  "homepage": null,
+  "issues": "https://github.com/JonEllis/ansible-sudoers/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "a7357f451d70cc5916e64a2bcebd514a9d45a888a6dc548ebca4d44fcba102cb",
+  "format": 1
+ },
+ "format": 1
+}

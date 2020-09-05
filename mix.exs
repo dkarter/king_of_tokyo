@@ -54,7 +54,8 @@ defmodule KingOfTokyo.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:plug_cowboy, "~> 2.3"},
       {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"}
+      {:telemetry_poller, "~> 0.4"},
+      {:logger_file_backend, "~> 0.0.11", only: :prod}
     ]
   end
 

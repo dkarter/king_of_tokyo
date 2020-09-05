@@ -3,6 +3,9 @@
 
   remote_user: root
 
+  collections:
+  - jonellis.sudoers
+
   tasks:
     - name: Create .env file
       template:
@@ -18,6 +21,13 @@
         line: '. "$HOME/{{ app_name }}.env"'
         state: present
         backup: yes
+
+    - name: Ensures log dir exists
+      file:
+        path: "/var/log/{{ app_name }}"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
 
     - name: Ensures shared/config dir exists
       file:
@@ -37,8 +47,23 @@
       template:
         src: "{{ app_name }}.service"
         dest: "/etc/systemd/system/{{ app_name }}.service"
+      notify:
+        - reload systemd
 
     - name: Enable Systemd service for application
       systemd:
         name: "{{ app_name }}"
         enabled: yes
+
+    - name: Allow deploy user to restart app
+      sudoers:
+        name: "allow-{{ username }}-systemctl"
+        user: "{{ username }}"
+        command:
+          - "/bin/systemctl restart {{ app_name }}"
+          - "/bin/systemctl start {{ app_name }}"
+          - "/bin/systemctl stop {{ app_name }}"
+
+  handlers:
+  - name: reload systemd
+    command: systemctl daemon-reload

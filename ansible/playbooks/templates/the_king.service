@@ -6,13 +6,14 @@ After=network.target
 
 [Service]
 User={{ username }}
-Restart=on-failure
-
-Type=forking
+Type=simple
 Environment=MIX_ENV=prod
-EnvironmentFile= "/home/{{ username }}/{{ app_name }}.env"
-ExecStart= /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} start
-ExecStop= /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} stop
+WorkingDirectory=/home/{{ username }}/app_release/{{ project_name }}
+ExecStart=/bin/bash -c 'source /home/{{ username }}/{{ app_name }}.env && /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} foreground'
+ExecStop=/bin/bash -c 'source /home/{{ username }}/{{ app_name }}.env && /home/{{ username }}/app_release/{{ project_name }}/bin/{{ project_name }} stop'
+
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
