@@ -13,6 +13,7 @@ defmodule KingOfTokyo.Game do
             code: nil,
             dice_state: %Dice{},
             players: [],
+            online_players: [],
             tokyo_bay_player_id: nil,
             tokyo_city_player_id: nil
 
