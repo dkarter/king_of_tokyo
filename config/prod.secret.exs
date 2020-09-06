@@ -1,17 +1,19 @@
 use Mix.Config
 
-secret_key_base = get_env!("KING_OF_TOKYO_SECRET_KEY_BASE")
-admin_username = get_env!("KING_OF_TOKYO_ADMIN_USERNAME")
-admin_password = get_env!("KING_OF_TOKYO_ADMIN_PASSWORD")
-logflare_api_key = get_env!("KING_OF_TOKYO_LOGFLARE_API_KEY")
-logflare_source_id = get_env!("KING_OF_TOKYO_LOGFLARE_SOURCE_ID")
-
-defp get_env!(var_name) do
-  System.get_env(var_name) ||
-    raise """
-    environment variable #{var_name} is missing.
-    """
+defmodule EnvHelper do
+  def get_env!(var_name) do
+    System.get_env(var_name) ||
+      raise """
+      environment variable #{var_name} is missing.
+      """
+  end
 end
+
+secret_key_base = EnvHelper.get_env!("KING_OF_TOKYO_SECRET_KEY_BASE")
+admin_username = EnvHelper.get_env!("KING_OF_TOKYO_ADMIN_USERNAME")
+admin_password = EnvHelper.get_env!("KING_OF_TOKYO_ADMIN_PASSWORD")
+logflare_api_key = EnvHelper.get_env!("KING_OF_TOKYO_LOGFLARE_API_KEY")
+logflare_source_id = EnvHelper.get_env!("KING_OF_TOKYO_LOGFLARE_SOURCE_ID")
 
 config :logflare_logger_backend,
   url: "https://api.logflare.app",
