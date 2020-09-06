@@ -4,3 +4,5 @@ app_name: the_king
 project_name: king_of_tokyo
 domain: theking.live
 admin_email: "{{ secret_admin_email }}"
+logflare_api_key: "{{ secret_logflare_api_key }}"
+logflare_source_id: "{{ secret_logflare_source_id }}"

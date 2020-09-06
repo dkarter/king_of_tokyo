@@ -13,7 +13,7 @@ config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
 
 # Do not print debug messages in production
 config :logger,
-  backends: [{LoggerFileBackend, :log_file}],
+  backends: [{LoggerFileBackend, :log_file}, LogflareLogger.HttpBackend],
   level: :info
 
 config :logger, :log_file,

@@ -55,7 +55,8 @@ defmodule KingOfTokyo.MixProject do
       {:plug_cowboy, "~> 2.3"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:logger_file_backend, "~> 0.0.11", only: :prod}
+      {:logger_file_backend, "~> 0.0.11", only: :prod},
+      {:logflare_logger_backend, "~> 0.7", only: :prod}
     ]
   end
 
