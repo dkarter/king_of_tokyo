@@ -1,23 +1,27 @@
 use Mix.Config
 
-secret_key_base =
-  System.get_env("KING_OF_TOKYO_SECRET_KEY_BASE") ||
-    raise """
-    environment variable KING_OF_TOKYO_SECRET_KEY_BASE is missing.
-    You can generate one by calling: mix phx.gen.secret
-    """
+defmodule EnvHelper do
+  def get_env!(var_name) do
+    System.get_env(var_name) ||
+      raise """
+      environment variable #{var_name} is missing.
+      """
+  end
+end
 
-admin_username =
-  System.get_env("KING_OF_TOKYO_ADMIN_USERNAME") ||
-    raise """
-    environment variable KING_OF_TOKYO_ADMIN_USERNAME is missing.
-    """
+secret_key_base = EnvHelper.get_env!("KING_OF_TOKYO_SECRET_KEY_BASE")
+admin_username = EnvHelper.get_env!("KING_OF_TOKYO_ADMIN_USERNAME")
+admin_password = EnvHelper.get_env!("KING_OF_TOKYO_ADMIN_PASSWORD")
+logflare_api_key = EnvHelper.get_env!("KING_OF_TOKYO_LOGFLARE_API_KEY")
+logflare_source_id = EnvHelper.get_env!("KING_OF_TOKYO_LOGFLARE_SOURCE_ID")
 
-admin_password =
-  System.get_env("KING_OF_TOKYO_ADMIN_PASSWORD") ||
-    raise """
-    environment variable KING_OF_TOKYO_ADMIN_PASSWORD is missing.
-    """
+config :logflare_logger_backend,
+  url: "https://api.logflare.app",
+  level: :info,
+  api_key: logflare_api_key,
+  source_id: logflare_source_id,
+  flush_interval: 1_000,
+  max_batch_size: 50
 
 config :king_of_tokyo, KingOfTokyoWeb.Endpoint, secret_key_base: secret_key_base
 
