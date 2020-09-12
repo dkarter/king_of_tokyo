@@ -203,7 +203,7 @@ defmodule KingOfTokyo.GameServerTest do
     end
 
     test "returns an error if player not found", %{game_id: game_id} do
-      player_id = Ecto.UUID.generate()
+      player_id = UUID.uuid4()
 
       assert {:error, :player_not_found} = GameServer.get_player_by_id(game_id, player_id)
     end

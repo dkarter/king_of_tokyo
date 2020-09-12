@@ -56,7 +56,7 @@ defmodule KingOfTokyo.Player do
   @spec new(String.t(), character_type()) :: t()
   def new(name, character) do
     params = %{
-      id: Ecto.UUID.generate(),
+      id: UUID.uuid4(),
       name: name,
       character: character
     }
