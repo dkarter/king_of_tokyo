@@ -81,7 +81,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
   @impl true
   def render(assigns) do
     form_id = "chat-message-form-#{assigns.id}"
-    messages = assigns.messages |> Enum.reverse() |> Enum.with_index()
+    messages = assigns.messages |> KingOfTokyo.ChatMessage.chunked_message_list()
 
     visible_class = if assigns[:open], do: "visible"
 
@@ -98,9 +98,9 @@ defmodule KingOfTokyoWeb.ChatComponent do
       </button>
       <%= if assigns[:open] do %>
         <div class="chat-popover <%= visible_class %>">
-          <div id="chat-history" class="history" phx-hook="ChatHistory" phx-update="append">
-            <%= for {message, index} <- messages do %>
-              <%= render_message(assigns, message, index) %>
+          <div id="chat-history" class="history" phx-hook="ChatHistory">
+            <%= for message_group <- messages do %>
+              <%= render_message_group(assigns, message_group) %>
             <% end %>
           </div>
           <form
@@ -128,27 +128,38 @@ defmodule KingOfTokyoWeb.ChatComponent do
     """
   end
 
-  defp render_message(assigns, message, index) do
-    from_me = message.player_id == assigns.current_player.id
+  defp render_message_group(assigns, message_group) do
+    [first_message | _] = message_group
+    from_me = first_message.player_id == assigns.current_player.id
 
     sender_initials =
       assigns.players
-      |> Enum.find(fn %{id: id} -> id == message.player_id end)
+      |> Enum.find(fn %{id: id} -> id == first_message.player_id end)
       |> sender_initials()
 
-    body_lines = split_lines(message.body)
-
     ~L"""
-    <div id="chat-msg-<%= index %>" class="message <%= if from_me, do: "from-me" %>">
-      <div class="body">
-        <%= for line <- body_lines do %>
-          <%= line %>
-          <br />
+    <div id="message-group-<%= first_message.id %>" class="message-group <%= if from_me, do: "from-me" %>">
+      <div class="messages">
+        <%= for message <- message_group do %>
+          <%= render_message_body(assigns, message) %>
         <% end %>
       </div>
       <div class="sender">
         <%= sender_initials %>
       </div>
+    </div>
+    """
+  end
+
+  def render_message_body(assigns, message) do
+    body_lines = split_lines(message.body)
+
+    ~L"""
+    <div id="chat-msg-<%= message.id %>" class="body">
+      <%= for line <- body_lines do %>
+        <%= line %>
+        <br />
+      <% end %>
     </div>
     """
   end
