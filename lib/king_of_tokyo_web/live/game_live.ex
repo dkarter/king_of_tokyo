@@ -225,7 +225,6 @@ defmodule KingOfTokyoWeb.GameLive do
     game.tokyo_city_player_id == player_id || game.tokyo_bay_player_id == player_id
   end
 
-  @spec game_id(Phoenix.Socket.t()) :: String.t()
   defp game_id(socket) do
     socket.assigns.game.code.game_id
   end
