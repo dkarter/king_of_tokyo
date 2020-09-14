@@ -264,20 +264,21 @@ select {
         .body {
           border-radius: 2rem;
           display: inline-block;
-          margin-bottom: 1rem;
+          margin-bottom: 0.2rem;
           padding: 0.5rem 1rem;
         }
 
         .sender {
-          width: 3rem;
-          height: 3rem;
+          width: 3.5rem;
+          height: 3.5rem;
           line-height: 3rem;
           align-items: center;
           border-radius: 50%;
           display: flex;
           font-weight: bold;
           justify-content: center;
-          padding-top: 0.25rem;
+          padding-top: 0.3rem;
+          margin-top: 0.5rem;
         }
       }
     }

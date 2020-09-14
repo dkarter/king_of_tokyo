@@ -6,13 +6,6 @@ defmodule KingOfTokyoWeb.ChatComponent do
   use KingOfTokyoWeb, :live_component
 
   @impl true
-  def handle_event("send-message", %{"body" => body}, socket) do
-    send(self(), {:send_message, body})
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("toggle-chat", _, socket) do
     {:noreply, assign(socket, open: !socket.assigns[:open])}
   end
@@ -30,31 +23,6 @@ defmodule KingOfTokyoWeb.ChatComponent do
       end
 
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", %{"key" => "Enter", "shiftKey" => false} = e, socket) do
-    if blank?(e["value"]) do
-      {:noreply, socket}
-    else
-      send(self(), {:send_message, e["value"]})
-      {:noreply, assign(socket, body: "")}
-    end
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", %{"key" => "Escape"}, socket) do
-    {:noreply, assign(socket, open: false)}
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", _, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("message-form-updated", %{"body" => body}, socket) do
-    {:noreply, assign(socket, body: body)}
   end
 
   @impl true
@@ -80,10 +48,11 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
   @impl true
   def render(assigns) do
-    form_id = "chat-message-form-#{assigns.id}"
-    messages = assigns.messages |> KingOfTokyo.ChatMessage.chunked_message_list()
-
     visible_class = if assigns[:open], do: "visible"
+
+    messages =
+      assigns.messages
+      |> KingOfTokyo.ChatMessage.chunked_message_list()
 
     ~L"""
     <div id="<%= @id %>"
@@ -103,25 +72,7 @@ defmodule KingOfTokyoWeb.ChatComponent do
               <%= render_message_group(assigns, message_group) %>
             <% end %>
           </div>
-          <form
-            id="<%= form_id %>"
-            action="#"
-            phx-change="message-form-updated"
-            phx-submit="send-message"
-            phx-target="#<%= form_id %>"
-          >
-            <textarea
-              id="chat-form-textarea"
-              placeholder="Start typing..."
-              name="body"
-              data-pending-val="<%= @body %>"
-              phx-hook="ChatFormTextArea"
-              phx-keyup="textarea-keypress"
-              phx-target="#<%= @id %>"
-              autofocus="true"
-            ></textarea>
-            <button type="submit" <%= if blank?(assigns[:body]), do: "disabled=\"disabled\"" %>><img src="/images/send.svg" /></button>
-          </form>
+          <%= live_component(@socket, KingOfTokyoWeb.Live.ChatForm, id: :chat_form) %>
         </div>
       <% end %>
     </div>
@@ -138,8 +89,11 @@ defmodule KingOfTokyoWeb.ChatComponent do
       |> sender_initials()
 
     ~L"""
-    <div id="message-group-<%= first_message.id %>" class="message-group <%= if from_me, do: "from-me" %>">
-      <div class="messages">
+    <div
+      id="message-group-<%= first_message.id %>"
+      class="message-group <%= if from_me, do: "from-me" %>"
+    >
+      <div id="messages-<%= first_message.id %>" class="messages">
         <%= for message <- message_group do %>
           <%= render_message_body(assigns, message) %>
         <% end %>
@@ -168,13 +122,6 @@ defmodule KingOfTokyoWeb.ChatComponent do
     str
     |> String.trim()
     |> String.split("\n")
-  end
-
-  defp blank?(str) do
-    str
-    |> to_string()
-    |> String.trim()
-    |> String.length() == 0
   end
 
   # Extracts the first two initials from a player's name and upcases them
