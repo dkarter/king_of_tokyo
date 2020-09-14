@@ -1,4 +1,8 @@
 defmodule KingOfTokyoWeb.Live.ChatForm do
+  @moduledoc """
+  Chat Form separated out from the chat popover so that history doesn't get
+  resent every time a key is clicked in the chat
+  """
   use KingOfTokyoWeb, :live_component
 
   @impl true
