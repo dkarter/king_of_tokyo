@@ -1,0 +1,23 @@
+{
+  "header_prefix": "Version:",
+  "commit_changelog": true,
+  "comment_changelog": true,
+  "group_config": [
+    {
+      "title": "Bug Fixes",
+      "labels": ["bug", "bugfix"]
+    },
+    {
+      "title": "Code Improvements",
+      "labels": ["improvements", "enhancement"]
+    },
+    {
+      "title": "New Features",
+      "labels": ["feature", "enhancement"]
+    },
+    {
+      "title": "Documentation Updates",
+      "labels": ["docs", "documentation", "doc"]
+    }
+  ]
+}

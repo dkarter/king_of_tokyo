@@ -17,3 +17,4 @@ jobs:
         uses: saadmk11/changelog-ci@v0.6.1
         with:
           changelog_filename: CHANGELOG.md
+          config_file: changelog-ci-config.json
