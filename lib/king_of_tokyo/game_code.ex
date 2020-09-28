@@ -20,7 +20,7 @@ defmodule KingOfTokyo.GameCode do
 
   @spec generate_game_code() :: String.t()
   def generate_game_code do
-    Ecto.UUID.generate()
+    UUID.uuid4()
     |> String.slice(0..5)
     |> String.upcase()
     |> String.split_at(3)

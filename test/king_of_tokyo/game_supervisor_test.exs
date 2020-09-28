@@ -35,7 +35,7 @@ defmodule KingOfTokyo.GameSupervisorTest do
     end
 
     test "ignores command if already terminated" do
-      game_id = Ecto.UUID.generate()
+      game_id = UUID.uuid4()
       assert :ok = GameSupervisor.stop_game(game_id)
     end
   end

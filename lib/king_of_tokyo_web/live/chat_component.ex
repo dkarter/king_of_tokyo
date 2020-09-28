@@ -6,13 +6,6 @@ defmodule KingOfTokyoWeb.ChatComponent do
   use KingOfTokyoWeb, :live_component
 
   @impl true
-  def handle_event("send-message", %{"body" => body}, socket) do
-    send(self(), {:send_message, body})
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("toggle-chat", _, socket) do
     {:noreply, assign(socket, open: !socket.assigns[:open])}
   end
@@ -30,31 +23,6 @@ defmodule KingOfTokyoWeb.ChatComponent do
       end
 
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", %{"key" => "Enter", "shiftKey" => false} = e, socket) do
-    if blank?(e["value"]) do
-      {:noreply, socket}
-    else
-      send(self(), {:send_message, e["value"]})
-      {:noreply, assign(socket, body: "")}
-    end
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", %{"key" => "Escape"}, socket) do
-    {:noreply, assign(socket, open: false)}
-  end
-
-  @impl true
-  def handle_event("textarea-keypress", _, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("message-form-updated", %{"body" => body}, socket) do
-    {:noreply, assign(socket, body: body)}
   end
 
   @impl true
@@ -80,10 +48,11 @@ defmodule KingOfTokyoWeb.ChatComponent do
 
   @impl true
   def render(assigns) do
-    form_id = "chat-message-form-#{assigns.id}"
-    messages = assigns.messages |> Enum.reverse() |> Enum.with_index()
-
     visible_class = if assigns[:open], do: "visible"
+
+    messages =
+      assigns.messages
+      |> KingOfTokyo.ChatMessage.chunked_message_list()
 
     ~L"""
     <div id="<%= @id %>"
@@ -98,52 +67,35 @@ defmodule KingOfTokyoWeb.ChatComponent do
       </button>
       <%= if assigns[:open] do %>
         <div class="chat-popover <%= visible_class %>">
-          <div id="chat-history" class="history" phx-hook="ChatHistory" phx-update="append">
-            <%= for {message, index} <- messages do %>
-              <%= render_message(assigns, message, index) %>
+          <div id="chat-history" class="history" phx-hook="ChatHistory">
+            <%= for message_group <- messages do %>
+              <%= render_message_group(assigns, message_group) %>
             <% end %>
           </div>
-          <form
-            id="<%= form_id %>"
-            action="#"
-            phx-change="message-form-updated"
-            phx-submit="send-message"
-            phx-target="#<%= form_id %>"
-          >
-            <textarea
-              id="chat-form-textarea"
-              placeholder="Start typing..."
-              name="body"
-              data-pending-val="<%= @body %>"
-              phx-hook="ChatFormTextArea"
-              phx-keyup="textarea-keypress"
-              phx-target="#<%= @id %>"
-              autofocus="true"
-            ></textarea>
-            <button type="submit" <%= if blank?(assigns[:body]), do: "disabled=\"disabled\"" %>><img src="/images/send.svg" /></button>
-          </form>
+          <%= live_component(@socket, KingOfTokyoWeb.Live.ChatForm, id: :chat_form) %>
         </div>
       <% end %>
     </div>
     """
   end
 
-  defp render_message(assigns, message, index) do
-    from_me = message.player_id == assigns.current_player.id
+  defp render_message_group(assigns, message_group) do
+    [first_message | _] = message_group
+    from_me = first_message.player_id == assigns.current_player.id
 
     sender_initials =
       assigns.players
-      |> Enum.find(fn %{id: id} -> id == message.player_id end)
+      |> Enum.find(fn %{id: id} -> id == first_message.player_id end)
       |> sender_initials()
 
-    body_lines = split_lines(message.body)
-
     ~L"""
-    <div id="chat-msg-<%= index %>" class="message <%= if from_me, do: "from-me" %>">
-      <div class="body">
-        <%= for line <- body_lines do %>
-          <%= line %>
-          <br />
+    <div
+      id="message-group-<%= first_message.id %>"
+      class="message-group <%= if from_me, do: "from-me" %>"
+    >
+      <div id="messages-<%= first_message.id %>" class="messages">
+        <%= for message <- message_group do %>
+          <%= render_message_body(assigns, message) %>
         <% end %>
       </div>
       <div class="sender">
@@ -153,17 +105,23 @@ defmodule KingOfTokyoWeb.ChatComponent do
     """
   end
 
+  def render_message_body(assigns, message) do
+    body_lines = split_lines(message.body)
+
+    ~L"""
+    <div id="chat-msg-<%= message.id %>" class="body">
+      <%= for line <- body_lines do %>
+        <%= line %>
+        <br />
+      <% end %>
+    </div>
+    """
+  end
+
   defp split_lines(str) do
     str
     |> String.trim()
     |> String.split("\n")
-  end
-
-  defp blank?(str) do
-    str
-    |> to_string()
-    |> String.trim()
-    |> String.length() == 0
   end
 
   # Extracts the first two initials from a player's name and upcases them

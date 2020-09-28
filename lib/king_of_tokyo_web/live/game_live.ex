@@ -58,7 +58,9 @@ defmodule KingOfTokyoWeb.GameLive do
       |> game_id()
       |> online_players()
 
-    {:noreply, assign(socket, game: %{game | online_players: online_players})}
+    game = %{game | online_players: online_players}
+
+    {:noreply, assign(socket, game: game)}
   end
 
   def handle_info({:put_temporary_flash, level, message}, socket) do
@@ -80,6 +82,7 @@ defmodule KingOfTokyoWeb.GameLive do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:send_message, body}, socket) do
     game_id = game_id(socket)
     message = KingOfTokyo.ChatMessage.new(body, socket.assigns.player.id)
@@ -92,15 +95,21 @@ defmodule KingOfTokyoWeb.GameLive do
     {:noreply, clear_flash(socket, Atom.to_string(level))}
   end
 
+  @impl true
   def handle_info({:update_player, player}, socket) do
-    :ok =
-      socket
-      |> game_id()
-      |> GameServer.update_player(player)
+    socket
+    |> game_id()
+    |> GameServer.update_player(player)
+    |> case do
+      :ok ->
+        {:noreply, assign(socket, player: player)}
 
-    {:noreply, assign(socket, player: player)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 
+  @impl true
   def handle_info(:reset_dice, socket) do
     {:ok, _dice_state} =
       socket
@@ -159,7 +168,10 @@ defmodule KingOfTokyoWeb.GameLive do
     {:noreply, socket}
   end
 
+  @impl true
   def render(assigns) do
+    messages = assigns.game.chat_messages
+
     ~L"""
     <div id="GameContainer" class="game-container" phx-hook="GameContainer">
       <div class="main-panel">
@@ -167,11 +179,12 @@ defmodule KingOfTokyoWeb.GameLive do
         <%= live_component(@socket, DiceRollerComponent, id: :dice_roller, dice_state: @game.dice_state) %>
       </div>
       <%= live_component(@socket, PlayerListComponent, players: @game.online_players, tokyo_city_player_id: @game.tokyo_city_player_id, tokyo_bay_player_id: @game.tokyo_bay_player_id) %>
-      <%= live_component(@socket, ChatComponent, id: :chat, messages: @game.chat_messages, current_player: @player, players: @game.players) %>
+      <%= live_component(@socket, ChatComponent, id: :chat, messages: messages, current_player: @player, players: @game.players) %>
     </div>
     """
   end
 
+  @impl true
   def mount(_params, session, socket) do
     socket =
       with %{"game_id" => game_id, "player_id" => player_id} <- session,

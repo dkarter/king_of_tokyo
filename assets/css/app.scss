@@ -216,13 +216,22 @@ select {
       height: 50rem;
       overflow: scroll;
 
-      .message {
+      .message-group {
         margin-bottom: 1rem;
+
+        .messages {
+          display: flex;
+          flex-direction: column;
+        }
 
         &.from-me {
           display: flex;
           flex-direction: column;
           align-items: flex-end;
+
+          .messages {
+            align-items: flex-end;
+          }
 
           .body,
           .sender {
@@ -232,10 +241,15 @@ select {
 
           .body {
             margin-right: 1rem;
+            width: max-content;
           }
         }
 
         &:not(.from-me) {
+          .messages {
+            align-items: flex-start;
+          }
+
           .body,
           .sender {
             background: #d8d8d8;
@@ -250,20 +264,21 @@ select {
         .body {
           border-radius: 2rem;
           display: inline-block;
-          margin-bottom: 1rem;
+          margin-bottom: 0.2rem;
           padding: 0.5rem 1rem;
         }
 
         .sender {
-          width: 3rem;
-          height: 3rem;
+          width: 3.5rem;
+          height: 3.5rem;
           line-height: 3rem;
           align-items: center;
           border-radius: 50%;
           display: flex;
           font-weight: bold;
           justify-content: center;
-          padding-top: 0.25rem;
+          padding-top: 0.3rem;
+          margin-top: 0.5rem;
         }
       }
     }
