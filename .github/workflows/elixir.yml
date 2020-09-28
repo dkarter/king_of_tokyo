@@ -66,6 +66,3 @@ jobs:
 
     - name: Run dialyzer
       run: mix dialyzer --no-check --halt-exit-status
-
-    - name: Changelog CI
-      uses: saadmk11/changelog-ci@v0.6.1
