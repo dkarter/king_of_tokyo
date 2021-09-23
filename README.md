@@ -33,7 +33,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
     $ export DIGITALOCEAN_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     ```
 
-3. Create an ssh key for the project for the project:
+3. Create an ssh key for the project:
 
     ```sh
     $ ssh-keygen -f ~/.ssh/theking
