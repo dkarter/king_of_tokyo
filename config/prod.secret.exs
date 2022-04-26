@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 defmodule EnvHelper do
   def get_env!(var_name) do
