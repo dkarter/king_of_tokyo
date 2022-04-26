@@ -10,7 +10,7 @@ $card-shadow: 0 0 3px -1px rgba(0, 0, 0, 0.3);
 $component-background: rgba(255, 255, 255, 0.8);
 
 body {
-  background: url('/images/tile.png');
+  background: url('../static/images/tile.png');
 }
 
 header {
@@ -82,7 +82,7 @@ select {
   padding: 1rem;
 
   .player {
-    background: url('/images/player-card.svg'), $component-background no-repeat;
+    background: url('../static/images/player-card.svg'), $component-background no-repeat;
     background-position: 0.8rem;
     border-radius: 1.5rem;
     box-shadow: $card-shadow;
@@ -404,50 +404,50 @@ select {
   }
 
   &.claw.black {
-    background-image: url('/images/dice/black/claw.svg');
+    background-image: url('../static/images/dice/black/claw.svg');
   }
 
   &.heart.black {
-    background-image: url('/images/dice/black/heart.svg');
+    background-image: url('../static/images/dice/black/heart.svg');
   }
 
   &.energy.black {
-    background-image: url('/images/dice/black/energy.svg');
+    background-image: url('../static/images/dice/black/energy.svg');
   }
 
   &.one.black {
-    background-image: url('/images/dice/black/one.svg');
+    background-image: url('../static/images/dice/black/one.svg');
   }
 
   &.two.black {
-    background-image: url('/images/dice/black/two.svg');
+    background-image: url('../static/images/dice/black/two.svg');
   }
 
   &.three.black {
-    background-image: url('/images/dice/black/three.svg');
+    background-image: url('../static/images/dice/black/three.svg');
   }
 
   &.claw.green {
-    background-image: url('/images/dice/green/claw.svg');
+    background-image: url('../static/images/dice/green/claw.svg');
   }
 
   &.heart.green {
-    background-image: url('/images/dice/green/heart.svg');
+    background-image: url('../static/images/dice/green/heart.svg');
   }
 
   &.energy.green {
-    background-image: url('/images/dice/green/energy.svg');
+    background-image: url('../static/images/dice/green/energy.svg');
   }
 
   &.one.green {
-    background-image: url('/images/dice/green/one.svg');
+    background-image: url('../static/images/dice/green/one.svg');
   }
 
   &.two.green {
-    background-image: url('/images/dice/green/two.svg');
+    background-image: url('../static/images/dice/green/two.svg');
   }
 
   &.three.green {
-    background-image: url('/images/dice/green/three.svg');
+    background-image: url('../static/images/dice/green/three.svg');
   }
 }

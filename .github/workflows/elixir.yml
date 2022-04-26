@@ -14,19 +14,22 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # TODO: 
+    # - switch to ASDF for managing versions so this can stay in sync..
+    # - no reason to have a matrix here since this is not a library...
     strategy:
       matrix:
-        elixir: [1.10.2]
-        otp: [22.2.8]
+        elixir: [1.13.4]
+        otp: [24.3.3]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Setup elixir
-      uses: actions/setup-elixir@v1
+      uses: erlef/setup-beam@v1
       with:
-        elixir-version: ${{ matrix.elixir }} # Define the elixir version [required]
-        otp-version: ${{ matrix.otp }} # Define the OTP version [required]
+        otp-version: ${{matrix.otp}}
+        elixir-version: ${{matrix.elixir}}
 
     - name: Retrieve Mix Dependencies Cache
       uses: actions/cache@v1

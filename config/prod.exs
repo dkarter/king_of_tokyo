@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :king_of_tokyo, KingOfTokyoWeb.Endpoint,
   http: [

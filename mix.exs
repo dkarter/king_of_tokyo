@@ -8,12 +8,12 @@ defmodule KingOfTokyo.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       deps: deps(),
       dialyzer: dialyzer(),
-      elixir: "~> 1.10",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       releases: releases(),
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      version: "0.2.0"
+      version: "0.2.1"
     ]
   end
 
@@ -36,7 +36,7 @@ defmodule KingOfTokyo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:credo, "~> 1.3", rutime: false, only: [:dev, :test]},
+      {:credo, "~> 1.6", rutime: false, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", runtime: false, only: [:dev, :test]},
       {:distillery, "~> 2.1.1"},
       {:edeliver, "~> 1.8.0"},
@@ -51,8 +51,8 @@ defmodule KingOfTokyo.MixProject do
       {:phoenix_live_dashboard, "~> 0.2"},
       {:phoenix_live_reload, "~> 1.2.1", only: :dev},
       {:phoenix_live_view, "~> 0.14"},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:plug_cowboy, "~> 2.3"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:plug_cowboy, "~> 2.5"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
       {:logger_file_backend, "~> 0.0.11", only: :prod},

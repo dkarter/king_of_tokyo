@@ -41,8 +41,8 @@ new DigitalOcean.DnsRecord('www', {
 new DigitalOcean.Project(projectName, {
   name: domainName,
   resources: [
-    droplet.id.apply(id => `do:droplet:${id}`),
-    domain.id.apply(id => `do:domain:${id}`),
+    droplet.id.apply((id: string) => `do:droplet:${id}`),
+    domain.id.apply((id: string) => `do:domain:${id}`),
   ],
 });
 
@@ -83,7 +83,7 @@ new DigitalOcean.Firewall(`${projectName}-firewall`, {
       destinationAddresses: defaultFirewallAddresses,
     },
   ],
-  dropletIds: [droplet.id.apply(i => +i)],
+  dropletIds: [droplet.id.apply((i: string) => +i)],
 });
 
 export const ip = droplet.ipv4Address;
