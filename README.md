@@ -2,8 +2,13 @@
   <img src="./king.svg" width="250" />
 </p>
 
+<p align="center">
+  <img alt="The King Live" src="./assets/static/images/logo.png" width="250" />
+</p>
 
-<img alt="The King Live" src="./assets/static/images/logo.png" width="250" /> &nbsp;&nbsp; ![Elixir CI](https://github.com/dkarter/king_of_tokyo/workflows/Elixir%20CI/badge.svg)
+<p align="center">
+  ![Elixir CI](https://github.com/dkarter/king_of_tokyo/workflows/Elixir%20CI/badge.svg)
+</p>
 
 An online multiplayer game inspired by the King Of Tokyo board game. 
 
