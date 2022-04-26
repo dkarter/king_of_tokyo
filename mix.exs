@@ -36,7 +36,7 @@ defmodule KingOfTokyo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:credo, "~> 1.3", rutime: false, only: [:dev, :test]},
+      {:credo, "~> 1.6", rutime: false, only: [:dev, :test]},
       {:dialyxir, "~> 1.0", runtime: false, only: [:dev, :test]},
       {:distillery, "~> 2.1.1"},
       {:edeliver, "~> 1.8.0"},
